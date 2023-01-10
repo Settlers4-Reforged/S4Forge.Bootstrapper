@@ -48,12 +48,12 @@ typedef interface ISettlers4Api2 FAR * LPSETTLERS4API2;
 typedef UINT32 S4HOOK;
 typedef LPVOID S4CUSTOMUI;
 
-enum S4_EDITION_ENUM : DWORD {
+public enum S4_EDITION_ENUM : DWORD {
 	S4_EDITION_GOLD = 1,
 	S4_EDITION_HISTORY = 2,
 };
 
-enum S4_ENTITY_ENUM : BYTE {
+public enum S4_ENTITY_ENUM : BYTE {
 	S4_ENTITY_UNKNOWN,
 
 	S4_ENTITY_BUILDING,
@@ -94,7 +94,7 @@ enum S4_ENTITY_ENUM : BYTE {
 		S4_ENTITY_TREE,
 };
 
-enum S4_GROUND_ENUM : BYTE {
+public enum S4_GROUND_ENUM : BYTE {
 	WATER1 = 0, // water1 does only exist without waves (it ignores the pond flag)
 	WATER2 = 1, // this ground respects the pond flag
 	WATER3 = 2, // this ground respects the pond flag
@@ -131,7 +131,7 @@ enum S4_GROUND_ENUM : BYTE {
 	MUD_GRASS = 145,  // transition triangles only: mud mud grass
 };
 
-enum S4_RESOURCE_ENUM : BYTE {
+public enum S4_RESOURCE_ENUM : BYTE {
 	S4_RESOURCE_NONE,
 	S4_RESOURCE_FISH_1,	S4_RESOURCE_FISH_2, S4_RESOURCE_FISH_3, S4_RESOURCE_FISH_4, S4_RESOURCE_FISH_5, S4_RESOURCE_FISH_6, S4_RESOURCE_FISH_7, S4_RESOURCE_FISH_8, S4_RESOURCE_FISH_9, S4_RESOURCE_FISH_10, S4_RESOURCE_FISH_11, S4_RESOURCE_FISH_12, S4_RESOURCE_FISH_13, S4_RESOURCE_FISH_14, S4_RESOURCE_FISH_15, S4_RESOURCE_FISH_16,
 	S4_RESOURCE_COAL_1, S4_RESOURCE_COAL_2, S4_RESOURCE_COAL_3, S4_RESOURCE_COAL_4, S4_RESOURCE_COAL_5, S4_RESOURCE_COAL_6, S4_RESOURCE_COAL_7, S4_RESOURCE_COAL_8, S4_RESOURCE_COAL_9, S4_RESOURCE_COAL_10, S4_RESOURCE_COAL_11, S4_RESOURCE_COAL_12, S4_RESOURCE_COAL_13, S4_RESOURCE_COAL_14, S4_RESOURCE_COAL_15, S4_RESOURCE_COAL_16,
@@ -146,7 +146,7 @@ enum S4_RESOURCE_ENUM : BYTE {
 // Roles define what an entity "does" or is destined for. You may create custom 
 // roles for entities. Just make sure to implement the proper Role interface for 
 // the entity type (building/pile/settler) you wish to program.
-enum S4_ROLE_ENUM : BYTE {
+public enum S4_ROLE_ENUM : BYTE {
 	S4_ROLE_UNKNOWN,
 	
 	// Pile Roles
@@ -212,7 +212,7 @@ enum S4_ROLE_ENUM : BYTE {
 	S4_ROLE_SETTLER_SABOTEUR,
 };
 
-enum S4_TRIBE_ENUM : BYTE {
+public enum S4_TRIBE_ENUM : BYTE {
 	S4_TRIBE_NONE = 255,
 	S4_TRIBE_ANY = 254,
 	S4_TRIBE_ROMAN = 0, // tribe 0
@@ -222,7 +222,7 @@ enum S4_TRIBE_ENUM : BYTE {
 	S4_TRIBE_TROJAN,
 };
 
-enum S4_GOOD_ENUM : BYTE {
+public enum S4_GOOD_ENUM : BYTE {
 	S4_GOOD_NONE = 0,
 	S4_GOOD_AGAVE, // good id 1
 	S4_GOOD_AMMO,
@@ -268,7 +268,7 @@ enum S4_GOOD_ENUM : BYTE {
 	S4_GOOD_SUNFLOWER, // good id 42
 };
 
-enum S4_BUILDING_ENUM : BYTE {
+public enum S4_BUILDING_ENUM : BYTE {
 	S4_BUILDING_NONE = 0,
 	//S4_BUILDING_READY,
 	//S4_BUILDING_UNDERCONSTRUCTION,
@@ -356,7 +356,7 @@ enum S4_BUILDING_ENUM : BYTE {
 	S4_BUILDING_SUNFLOWERFARMERHUT,
 };
 
-enum S4_SETTLER_ENUM : BYTE {
+public enum S4_SETTLER_ENUM : BYTE {
 	S4_SETTLER_NONE = 0,
 	S4_SETTLER_CARRIER, // settler id 1
 	S4_SETTLER_DIGGER,
@@ -431,7 +431,7 @@ enum S4_SETTLER_ENUM : BYTE {
 	S4_SETTLER_UNK69 = 69, // Probably door swordman of a tower
 };
 
-enum S4_ANIMAL_ENUM : BYTE {
+public enum S4_ANIMAL_ENUM : BYTE {
 	S4_ANIMAL_NONE = 0,
 	S4_ANIMAL_HOG = 1,
 	S4_ANIMAL_BUG_1 = 2, // unconfirmed, is it an IEntity?
@@ -460,7 +460,7 @@ enum S4_ANIMAL_ENUM : BYTE {
 	S4_ANIMAL_PARROT = 0,  // unknown, probably an effect?
 };
 
-enum S4_VEHICLE_ENUM : BYTE {
+public enum S4_VEHICLE_ENUM : BYTE {
 	S4_VEHICLE_NONE = 0,
 	S4_VEHICLE_WARSHIP, // vehicle id 1
 	S4_VEHICLE_FERRY,
@@ -470,7 +470,7 @@ enum S4_VEHICLE_ENUM : BYTE {
 	S4_VEHICLE_FOUNDATION_CART,
 };
 
-enum S4_TREE_ENUM : BYTE {
+public enum S4_TREE_ENUM : BYTE {
 	S4_TREE_NONE = 0,
 	S4_TREE_OAK = 1,
 	S4_TREE_BEECH = 2,
@@ -504,11 +504,11 @@ enum S4_TREE_ENUM : BYTE {
 	S4_TREE_TROJAN_4 = S4_TREE_OLIVE_SMALL,
 };
 
-enum S4_SOUND_ENUM : DWORD {
+public enum S4_SOUND_ENUM : DWORD {
 	S4_SOUND_NONE = 0,
 };
 
-enum S4_SPELL_ENUM : BYTE {
+public enum S4_SPELL_ENUM : BYTE {
 	S4_SPELL_NONE = 0,
 	S4_SPELL_1,
 	S4_SPELL_2,
@@ -520,7 +520,7 @@ enum S4_SPELL_ENUM : BYTE {
 	S4_SPELL_8,
 };
 
-enum S4_GUI_ENUM : DWORD {
+public enum S4_GUI_ENUM : DWORD {
 	S4_GUI_UNKNOWN=0,
 	S4_SCREEN_MAINMENU=1,
 	S4_SCREEN_TUTORIAL,
@@ -598,12 +598,12 @@ enum S4_GUI_ENUM : DWORD {
 	S4_GUI_ENUM_MAXVALUE // never put anything below this
 };
 
-enum S4_ENTITY_CAUSE : BOOL {
+public enum S4_ENTITY_CAUSE : BOOL {
 	S4_ENTITY_DESTRUCTED = 1,
 	S4_ENTITY_CONSTRUCTED,
 };
 
-enum S4_MOVEMENT_ENUM : DWORD {
+public enum S4_MOVEMENT_ENUM : DWORD {
 	S4_MOVEMENT_FORWARD,
 	S4_MOVEMENT_PATROL,
 	S4_MOVEMENT_ACCUMULATE,
@@ -639,13 +639,13 @@ typedef CONST S4UiElement* LPCS4UIELEMENT;
 #define S4_CUSTOMUIFLAGS_ANCHOR_CENTER (1<<14)
 #define S4_CUSTOMUIFLAGS_ANCHOR_RIGHT (1<<15)
 
-enum S4_CUSTOM_UI_ENUM : DWORD {
+public enum S4_CUSTOM_UI_ENUM : DWORD {
 	S4_CUSTOM_UI_UNSELECTED = 0,
 	S4_CUSTOM_UI_SELECTED = 1,
 	S4_CUSTOM_UI_HOVERING = 2,
 	S4_CUSTOM_UI_HOVERING_SELECTED = 3,
 };
-enum S4_UI_TYPE : BYTE {
+public enum S4_UI_TYPE : BYTE {
 	IGNORED = 4,
 	PLAYER_ICON = 6,
 	MAP = 9,
@@ -655,7 +655,7 @@ enum S4_UI_TYPE : BYTE {
 	MISSION_TEXT = 21,
 };
 
-enum S4_UI_EFFECTS : BYTE {
+public enum S4_UI_EFFECTS : BYTE {
 	NONE = 0,
 	PRESSED = 1,
 	HOVER = 2,
@@ -665,7 +665,7 @@ enum S4_UI_EFFECTS : BYTE {
 	CURSOR_BLINK_ON = 128,
 };
 
-enum S4_UI_TEXTSTYLE : BYTE {
+public enum S4_UI_TEXTSTYLE : BYTE {
 	LARGE_BLUE = 0b00000000,
 	SMALL_BLUE = 0b00000100,
 	SMALL_WHITE = 0b00001000,
@@ -743,7 +743,7 @@ typedef struct S4GuiElementBltParams {
 	WORD tooltipLinkExtra;
 	S4_UI_TYPE imageStyle;
 	S4_UI_EFFECTS effects; //When == 8 -> hide text
-	S4_UI_TEXTSTYLE textStyle; //enum where the first 4 bits define which font style to use and last 4 bits define effects (Like pressed etc)
+	S4_UI_TEXTSTYLE textStyle; //public enum where the first 4 bits define which font style to use and last 4 bits define effects (Like pressed etc)
 	WORD showTexture;
 	WORD backTexture;
 	char* text;
