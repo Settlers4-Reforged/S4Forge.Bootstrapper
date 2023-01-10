@@ -39,6 +39,18 @@
     <ClInclude Include="NetS4ModApi.h">
       <Filter>Header Files\ModAPI</Filter>
     </ClInclude>
+    <ClInclude Include="IPlugin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ManagedIncludes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ManagedLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="S4Hooks.h">
+      <Filter>Header Files\ModAPI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp">
@@ -50,10 +62,13 @@
     <ClCompile Include="DllMain.cpp">
       <Filter>Source Files\Init</Filter>
     </ClCompile>
-    <ClCompile Include="NetS4ModApi.cpp">
+    <ClCompile Include="NetModAPI.cpp">
+      <Filter>Source Files\ModAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="ManagedLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NetModAPI.cpp">
+    <ClCompile Include="NetS4ModApi.cpp">
       <Filter>Source Files\ModAPI</Filter>
     </ClCompile>
   </ItemGroup>

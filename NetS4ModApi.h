@@ -1,24 +1,91 @@
 #pragma once
 
+#pragma make_public(IDirectDrawSurface7)
+#include "S4Hooks.h"
+
 using namespace System;
+using namespace Runtime::InteropServices;
+using namespace Collections::Generic;
 
 namespace NetModAPI {
 	public ref class NetS4ModApi {
 	private:
-		S4API s4;
+		static S4API s4;
 
 	public:
-		NetS4ModApi() {
+		NetS4ModApi() { }
+
+		static NetS4ModApi() {
 			s4 = ModAPI;
+			s4->AddFrameListener(&CS4FrameCallback);
+			s4->AddUIFrameListener(&CS4UIFrameCallback, S4_GUI_UNKNOWN);
+			s4->AddMapInitListener(&CS4MapInitCallback);
+			s4->AddSettlerSendListener(&CS4SettlerSendCallback);
+			s4->AddTickListener(&CS4TickCallback);
+			s4->AddLuaOpenListener(&CS4LuaOpenCallback);
+			s4->AddBltListener(&CS4BltCallback);
+			s4->AddEntityListener(&CS4EntityCallback);
+			s4->AddGuiBltListener(&CS4GUIBltCallback);
+			s4->AddGuiClearListener(&CS4GUIClearCallback);
 		}
 
-		/** Never change  interface, create a new one if you need to change methods.
-			Otherwise you will break the ABI. Appending (to the end) is acceptable since
-			older versions never access methods beyond their known vtable. You may also
-			change arguments as long as the argument list is still compatible with the
-			old one. **/
+		delegate HRESULT S4FrameCallback(LPDIRECTDRAWSURFACE7 lpSurface, INT32 iPillarboxWidth, LPVOID lpReserved);
+		delegate HRESULT S4MapInitCallback(LPVOID lpReserved0, LPVOID lpReserved1);
+		delegate HRESULT S4MouseCallback(DWORD dwMouseButton, INT iX, INT iY, DWORD dwMsgId, HWND hwnd, LPCS4UIELEMENT lpUiElement);
+		delegate HRESULT S4SettlerSendCallback(DWORD dwPosition, S4_MOVEMENT_ENUM dwCommand, LPVOID lpReserved);
+		delegate HRESULT S4TickCallback(DWORD dwTick, BOOL bHasEvent, BOOL bIsDelayed);
+		delegate HRESULT S4LuaOpenCallback();
+		delegate BOOL S4BltCallback(LPS4BLTPARAMS params, BOOL discard);
+		delegate BOOL S4GuiBltCallback(LPS4GUIBLTPARAMS params, BOOL discard);
+		delegate HRESULT S4EntityCallback(WORD entity, S4_ENTITY_CAUSE cause); // called when an entity is spawned or destructed // todo: implement me
+		delegate HRESULT S4GuiDrawCallback(LPS4GUIDRAWBLTPARAMS entity, BOOL discard);
+		delegate HRESULT S4GuiClearCallback(LPS4GUICLEARPARAMS entity, BOOL discard);
 
-			/** IUnknown methods **/
+#define CALLBACK_ADD(name, list, type) std::function<type> fun = static_cast<LP##type>(Marshal::GetFunctionPointerForDelegate(name).ToPointer());auto callback = CreateCallback<type>(&fun); list##.emplace_back(callback); return callback->id
+
+		/** Hooks/Observers **/
+		void RemoveListener(S4HOOK hook) {
+			RemoveAnyCallback(hook);
+		}
+		S4HOOK  AddFrameListener(S4FrameCallback ^clbk) {
+			CALLBACK_ADD(clbk, S4FrameCallbackList, S4FRAMECALLBACK);
+		}
+		S4HOOK  AddUIFrameListener(S4FrameCallback ^clbk, S4_GUI_ENUM gui) {
+			CALLBACK_ADD(clbk, S4UIFrameCallbackList, S4FRAMECALLBACK);
+		}
+		S4HOOK  AddMapInitListener(S4MapInitCallback ^clbk) {
+			CALLBACK_ADD(clbk, S4MapInitCallbackList, S4MAPINITCALLBACK);
+		}
+		S4HOOK  AddMouseListener(S4MouseCallback ^clbk) {
+			CALLBACK_ADD(clbk, S4MouseCallbackList, S4MOUSECALLBACK);
+		}
+		S4HOOK  AddSettlerSendListener(S4SettlerSendCallback ^clbk) {
+			CALLBACK_ADD(clbk, S4SettlerSendCallbackList, S4SETTLERSENDCALLBACK);
+		}
+		S4HOOK  AddTickListener(S4TickCallback ^clbk) {
+			CALLBACK_ADD(clbk,S4TickCallbackList , S4TICKCALLBACK);
+		}
+		S4HOOK  AddLuaOpenListener(S4LuaOpenCallback ^clbk) {
+			CALLBACK_ADD(clbk, S4LuaOpenCallbackList, S4LUAOPENCALLBACK);
+		}
+		S4HOOK  AddBltListener(S4BltCallback ^clbk) {
+			CALLBACK_ADD(clbk, S4BltCallbackList, S4BLTCALLBACK);
+		}
+		S4HOOK  AddEntityListener(S4EntityCallback ^clbk) {
+			CALLBACK_ADD(clbk, S4EntityCallbackList, S4ENTITYCALLBACK);
+		}
+		S4HOOK  AddGuiBltListener(S4GuiBltCallback ^clbk) {
+			CALLBACK_ADD(clbk, S4GUIBltCallbackList, S4GUIBLTCALLBACK);
+		}
+		S4HOOK  AddGuiClearListener(S4GuiClearCallback ^clbk) {
+			CALLBACK_ADD(clbk, S4GUIClearCallbackList, S4GUICLEARCALLBACK);
+		}
+		S4HOOK  AddGuiElementBltListener(S4GuiDrawCallback^ clbk) {
+			CALLBACK_ADD(clbk, S4GUIDrawCallbackList, S4GUIDRAWCALLBACK);
+		}
+
+
+		/** IUnknown methods **/
 		HRESULT QueryInterface(REFIID riid, LPVOID FAR* ppvObj) { return s4->QueryInterface(riid, ppvObj); }
 		ULONG  AddRef() { return s4->AddRef(); }
 		ULONG  Release() { return s4->Release(); }
@@ -26,20 +93,6 @@ namespace NetModAPI {
 		/** ISettlers4Api methods **/
 		LPVOID  GetDebugData(LPVOID a, LPVOID b) { return s4->GetDebugData(a, b); }
 		DWORD  GetLastError() { return s4->GetLastError(); }
-
-		/** Hooks/Observers **/
-		HRESULT RemoveListener(S4HOOK hook) { return s4->RemoveListener(hook); }
-		S4HOOK  AddFrameListener(LPS4FRAMECALLBACK clbk) { return s4->AddFrameListener(clbk); }
-		S4HOOK  AddUIFrameListener(LPS4FRAMECALLBACK clbk, S4_GUI_ENUM gui) { return s4->AddUIFrameListener(clbk, gui); }
-		S4HOOK  AddMapInitListener(LPS4MAPINITCALLBACK clbk) { return s4->AddMapInitListener(clbk); }
-		S4HOOK  AddMouseListener(LPS4MOUSECALLBACK clbk) { return s4->AddMouseListener(clbk); }
-		S4HOOK  AddSettlerSendListener(LPS4SETTLERSENDCALLBACK clbk) { return s4->AddSettlerSendListener(clbk); }
-		S4HOOK  AddTickListener(LPS4TICKCALLBACK clbk) { return s4->AddTickListener(clbk); }
-		S4HOOK  AddLuaOpenListener(LPS4LUAOPENCALLBACK clbk) { return s4->AddLuaOpenListener(clbk); }
-		S4HOOK  AddBltListener(LPS4BLTCALLBACK clbk) { return s4->AddBltListener(clbk); }
-		S4HOOK  AddEntityListener(LPS4ENTITYCALLBACK clbk) { return s4->AddEntityListener(clbk); }
-		S4HOOK  AddGuiBltListener(LPS4GUIBLTCALLBACK clbk) { return s4->AddGuiBltListener(clbk); }
-		S4HOOK  AddGuiClearListener(LPS4GUICLEARCALLBACK clbk) { return s4->AddGuiClearListener(clbk); }
 
 		/** Misc helper functions **/
 		HRESULT GetMD5OfModule(HMODULE module, LPSTR out, SIZE_T sz) { return s4->GetMD5OfModule(module, out, sz); };
@@ -54,7 +107,7 @@ namespace NetModAPI {
 		S4_ENTITY_ENUM  EntityGetClass(WORD entity) { return s4->EntityGetClass(entity); }
 		BOOL  GetEntities(DWORD* entities, size_t size) { return s4->GetEntities(entities, size); };
 		BOOL  EntityGetPosition(WORD entity, LPINT x, LPINT y) { return s4->EntityGetPosition(entity, x, y); }
-		BOOL  EntitygGetDirection(WORD entity, LPDWORD dir) { return s4->EntitygGetDirection(entity, dir); }
+		BOOL  EntityGetDirection(WORD entity, LPDWORD dir) { return s4->EntitygGetDirection(entity, dir); }
 		BOOL  EntityGetHealth(WORD entity, LPDWORD health) { return s4->EntityGetHealth(entity, health); }
 		BOOL  EntityGetMaxHealth(WORD entity, LPDWORD maxHealth) { return s4->EntityGetMaxHealth(entity, maxHealth); }
 		BOOL  EntityGetTribe(WORD entity, S4_TRIBE_ENUM* tribe) { return s4->EntityGetTribe(entity, tribe); }
@@ -68,8 +121,8 @@ namespace NetModAPI {
 		BOOL  EntityBuildingGetType(WORD entity, S4_BUILDING_ENUM* building) { return s4->EntityBuildingGetType(entity, building); }
 		BOOL  EntityStoneGetLevel(WORD entity, LPDWORD level) { return s4->EntityStoneGetLevel(entity, level); }
 		BOOL  EntityGetRole(WORD entity, LPVOID* role) { return s4->EntityGetRole(entity, role); }
-		BOOL  EntitygGetRoleClass(WORD entity, S4_ROLE_ENUM* role) { return s4->EntitygGetRoleClass(entity, role); }
-		BOOL  EntitygGetOwner(WORD entity, LPDWORD player) { return s4->EntitygGetOwner(entity, player); }
+		BOOL  EntityGetRoleClass(WORD entity, S4_ROLE_ENUM* role) { return s4->EntitygGetRoleClass(entity, role); }
+		BOOL  EntityGetOwner(WORD entity, LPDWORD player) { return s4->EntitygGetOwner(entity, player); }
 
 		BOOL  ClearSelection() { return s4->ClearSelection(); }  // defined in CS4Selection.cpp
 		BOOL  GetSelection(PWORD out, SIZE_T outlen, PSIZE_T selectionCount) { return s4->GetSelection(out, outlen, selectionCount); }  // defined in CS4Selection.cpp
@@ -154,7 +207,7 @@ namespace NetModAPI {
 		BOOL  IsAreaGreen(INT x, INT y, INT r) { return s4->IsAreaGreen(x, y, r); }  // defined in CS4Scripting.cpp
 		BOOL  IsAreaOwned(INT x, INT y, INT r, DWORD player) { return s4->IsAreaOwned(x, y, r, player); }  // defined in CS4Scripting.cpp
 		DWORD  GetNumberOfPlayers() { return s4->GetNumberOfPlayers(); }  // defined in CS4Scripting.cpp
-		DWORD  GetPlayerTribe(DWORD player) { return s4->GetPlayerTribe(player); }  // defined in CS4Scripting.cpp
+		S4_TRIBE_ENUM  GetPlayerTribe(DWORD player) { return s4->GetPlayerTribe(player); }  // defined in CS4Scripting.cpp
 		BOOL  ResetFogging() { return s4->ResetFogging(); }  // defined in CS4Scripting.cpp
 		BOOL  SetAlliesDontRevealFog(BOOL enable) { return s4->SetAlliesDontRevealFog(enable); }  // defined in CS4Scripting.cpp
 		BOOL  SetFightingStrength(DWORD strength, DWORD player) { return s4->SetFightingStrength(strength, player); }  // defined in CS4Scripting.cpp
@@ -206,9 +259,6 @@ namespace NetModAPI {
 		BOOL  SetGround(INT x, INT y, INT r, DWORD ground) { return s4->SetGround(x, y, r, ground); }  // defined in CS4Scripting.cpp
 		BOOL  ShowTextMessage(LPCSTR message, DWORD icon, DWORD reserved) { return s4->ShowTextMessage(message, icon, reserved); }  // defined in CS4Scripting.cpp
 		BOOL  SoundPlay(S4_SOUND_ENUM sound, LPVOID reserved, LPVOID reserved2) { return s4->SoundPlay(sound, reserved, reserved2); }  // defined in CS4Scripting.cpp
-
-		// Added since version 2.2
-		S4HOOK  AddGuiElementBltListener(LPS4GUIDRAWCALLBACK clbk) { return s4->AddGuiElementBltListener(clbk); }
 	};
 
 }
