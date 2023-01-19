@@ -32,9 +32,31 @@ Assembly^ AssemblyLoader(Object^ sender, ResolveEventArgs^ args) {
 			return a;
 	}
 
+	String^ resourceName = (gcnew AssemblyName(args->Name))->Name + ".dll";
+
+	String^ resource = nullptr;
+	auto embeddedAssemblies = (NetModAPI::IPlugin::typeid)->Assembly->GetManifestResourceNames();
+	for each(String^ a in embeddedAssemblies) {
+		if(a->EndsWith(resourceName)) {
+			resource = a;
+			break;
+		}
+	}
+
+	if (resource != nullptr) {
+		auto stream = Assembly::GetExecutingAssembly()->GetManifestResourceStream(resource);
+
+		array<Byte>^ assemblyData = gcnew array<Byte>(stream->Length);
+		stream->Read(assemblyData, 0, assemblyData->Length);
+		stream->Close();
+		return Assembly::Load(assemblyData);
+	}
+
 	if (args->RequestingAssembly == nullptr) return nullptr;
 
 	String^ folderPath = Path::GetDirectoryName(args->RequestingAssembly->Location);
+	if (folderPath == nullptr)
+		folderPath = "";
 	String^ rawAssemblyPath = Path::Combine(folderPath, (gcnew System::Reflection::AssemblyName(args->Name))->Name);
 
 	String^ assemblyPath = rawAssemblyPath + ".dll";
@@ -71,7 +93,12 @@ bool NetModAPI::NetModAPI::LoadAllPlugins() {
 			IPlugin^ plugin = static_cast<IPlugin^>(Activator::CreateInstance(pluginClass));
 			plugin->Initialize();
 		} catch(Exception^ e) {
-			String^ errorMsg = String::Format("Error during load of Assembly '{0}'\nError: {1}!", file, e->Message);
+			String^ stackTrace = e->StackTrace;
+			while(e->InnerException != nullptr) {
+				e = e->InnerException;
+			}
+
+			String^ errorMsg = String::Format("Error during load of Assembly '{0}'\nError: {1}\n\n============= Stack Trace =============\n{2}", file, e->Message, stackTrace);
 			MessageBox(nullptr, static_cast<LPCWSTR>(Runtime::InteropServices::Marshal::StringToHGlobalUni(errorMsg).ToPointer()), L"Loader", 0);
 		}
 	}

@@ -8,9 +8,6 @@
 #define PCH_H
 
 #pragma managed(push, off)
-
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
 // add headers that you want to pre-compile here
 
 #include "S4ModApi.h"
