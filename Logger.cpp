@@ -11,7 +11,8 @@ static NetModAPI::Logger::Logger() {
     // Targets where to log to: File and Console
     auto logfile = gcnew NLog::Targets::FileTarget("logfile");
     logfile->FileName = NLog::Layouts::Layout::FromString("plugins/s4-netmodapi.txt");
-    auto logconsole = gcnew NLog::Targets::ConsoleTarget("logconsole");
+    logfile->DeleteOldFileOnStartup = true;
+    auto logconsole = gcnew NLog::Targets::ColoredConsoleTarget("logconsole");
 
     // Rules for mapping loggers to targets            
     config->AddRule(NLog::LogLevel::Info, NLog::LogLevel::Fatal, logconsole, "*");
