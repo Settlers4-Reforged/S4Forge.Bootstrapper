@@ -73,6 +73,10 @@ extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPV
         if (GetAsyncKeyState('Q')) {
             MessageBoxA(nullptr, "NetModAPI DEBUG", "NetModAPI", 0);
         }
+
+        AllocConsole();
+        freopen("CONOUT$", "w", stdout);
+        freopen("CONOUT$", "w", stderr);
 #endif // !PUBLIC
 
         if (!Init()) break;
