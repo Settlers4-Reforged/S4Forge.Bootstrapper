@@ -22,6 +22,18 @@
     <Filter Include="Header Files\ModAPI">
       <UniqueIdentifier>{8c38de0d-4d38-427d-9a65-9c87c7701642}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ModAPI\Logger">
+      <UniqueIdentifier>{c14f1c06-2792-40fa-aafa-1d9b12ef227c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ModAPI\Logger">
+      <UniqueIdentifier>{86bdb139-43a5-4b31-bb1d-d36d781a715b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Config">
+      <UniqueIdentifier>{4428d5d9-f649-408c-85ed-13dd142787ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Resources">
+      <UniqueIdentifier>{c9d4091d-d8fd-46ae-9090-35643d1b9272}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NetModAPI.h">
@@ -51,11 +63,11 @@
     <ClInclude Include="S4Hooks.h">
       <Filter>Header Files\ModAPI</Filter>
     </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Header Files\ModAPI\Logger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AssemblyInfo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -65,11 +77,17 @@
     <ClCompile Include="NetModAPI.cpp">
       <Filter>Source Files\ModAPI</Filter>
     </ClCompile>
-    <ClCompile Include="ManagedLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="NetS4ModApi.cpp">
       <Filter>Source Files\ModAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Source Files\ModAPI\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="AssemblyInfo.cpp">
+      <Filter>Source Files\Config</Filter>
+    </ClCompile>
+    <ClCompile Include="ManagedLoader.cpp">
+      <Filter>Source Files\Init</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -81,5 +99,15 @@
     <Image Include="app.ico">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="iwjdependency.xml">
+      <Filter>Resource Files</Filter>
+    </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <_EmbedManagedResourceFile Include="lib\managed\NLog.dll">
+      <Filter>Resource Files\Resources</Filter>
+    </_EmbedManagedResourceFile>
   </ItemGroup>
 </Project>

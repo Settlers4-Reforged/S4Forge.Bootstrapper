@@ -9,7 +9,8 @@ namespace NetModAPI {
 	public:
 		static Logger();
 
-        static void Log(String^ msg);
+		static void LogInfo(String^ msg);
+		static void LogDebug(String^ msg);
         static void LogError(String^ msg, Exception^ exception);
 	};
 }

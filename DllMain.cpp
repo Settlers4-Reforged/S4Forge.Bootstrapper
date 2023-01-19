@@ -25,23 +25,23 @@ static bool Init() {
 }
 
 HANDLE GetParentProcess() {
-    HANDLE Snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    const HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 
-    PROCESSENTRY32 ProcessEntry = {};
-    ProcessEntry.dwSize = sizeof(PROCESSENTRY32);
+    PROCESSENTRY32 processEntry = {};
+    processEntry.dwSize = sizeof(PROCESSENTRY32);
 
-    if (Process32First(Snapshot, &ProcessEntry)) {
-        DWORD CurrentProcessId = GetCurrentProcessId();
+    if (Process32First(snapshot, &processEntry)) {
+        const DWORD currentProcessId = GetCurrentProcessId();
 
         do {
-            if (ProcessEntry.th32ProcessID == CurrentProcessId)
+            if (processEntry.th32ProcessID == currentProcessId)
                 break;
-        } while (Process32Next(Snapshot, &ProcessEntry));
+        } while (Process32Next(snapshot, &processEntry));
     }
 
-    CloseHandle(Snapshot);
+    CloseHandle(snapshot);
 
-    return OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, ProcessEntry.th32ParentProcessID);
+    return OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, processEntry.th32ParentProcessID);
 }
 
 extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved) {
@@ -52,12 +52,12 @@ extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPV
         if (GetAsyncKeyState(VK_F2)) {
             return TRUE;
         }
-        
-        auto parent_handle = GetParentProcess();
+
+        const HANDLE parent_handle = GetParentProcess();
         wchar_t process_name[1024] = { 0 };
         DWORD   process_name_size = 1024;
         QueryFullProcessImageNameW(parent_handle, 0, process_name, &process_name_size);
-        std::filesystem::path process_file_path(process_name);
+        const std::filesystem::path process_file_path(process_name);
 
         const std::string parentName = process_file_path.filename().string();
         

@@ -3,12 +3,11 @@
 #include "IPlugin.h"
 #include "NetModAPI.h"
 
-
 using namespace System;
-using namespace System::IO;
-using namespace System::Reflection;
-using namespace System::Linq;
-using namespace System::Collections::Generic;
+using namespace IO;
+using namespace Reflection;
+using namespace Linq;
+using namespace Collections::Generic;
 
 bool IsIPlugin(Type^ type) {
 	if (type->IsInterface)
@@ -46,7 +45,7 @@ Assembly^ AssemblyLoader(Object^ sender, ResolveEventArgs^ args) {
 	if (resource != nullptr) {
 		auto stream = Assembly::GetExecutingAssembly()->GetManifestResourceStream(resource);
 
-		array<Byte>^ assemblyData = gcnew array<Byte>(stream->Length);
+		array<Byte>^ assemblyData = gcnew array<Byte>(safe_cast<int>(stream->Length));
 		stream->Read(assemblyData, 0, assemblyData->Length);
 		stream->Close();
 		return Assembly::Load(assemblyData);
@@ -72,9 +71,9 @@ Assembly^ AssemblyLoader(Object^ sender, ResolveEventArgs^ args) {
 }
 
 bool NetModAPI::NetModAPI::LoadAllPlugins() {
-	MessageBox(nullptr, L"Loading..", L"Loader", 0);
 	array<String^>^ files = Directory::GetFiles(Environment::CurrentDirectory + "/plugins/", PluginExtension);
 
+#pragma warning(suppress : 4947)
 	AppDomain::CurrentDomain->AppendPrivatePath("plugins\\");
 
 	AppDomain^ currentDomain = AppDomain::CurrentDomain;
