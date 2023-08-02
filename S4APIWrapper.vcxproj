@@ -9,63 +9,40 @@
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <EnableManagedPackageReferenceSupport>true</EnableManagedPackageReferenceSupport>
     <ProjectGuid>{8EDF8B3B-53C8-4542-AC3E-DEF9DAD41C62}</ProjectGuid>
-    <Keyword>NetCoreCProj</Keyword>
-    <RootNamespace>NetModAPI</RootNamespace>
+    <Keyword>ManagedCProj</Keyword>
+    <RootNamespace>Forge.ModAPI</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <TargetFramework>net6.0</TargetFramework>
-    <TargetFrameworkVersion>dotnetcore3.1</TargetFrameworkVersion>
     <RuntimeIdentifier>win-x86</RuntimeIdentifier>
     <OutputType>Lib</OutputType>
     <TargetExt>.asi</TargetExt>
     <Platforms>x86</Platforms>
-    <PublishReadyToRun>true</PublishReadyToRun>
-    <PublishSingleFile>true</PublishSingleFile>
-    <PublishTrimmed>true</PublishTrimmed>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <CLRSupport>true</CLRSupport>
+    <CharacterSet>Unicode</CharacterSet>
+    <TargetExt>.asi</TargetExt>
+    <OutDir>$(SolutionDir)BUILD\APIWrapper\$(Configuration)\</OutDir>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <CLRSupport>NetCore</CLRSupport>
-    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <CLRSupport>NetCore</CLRSupport>
-    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <CLRSupport>NetCore</CLRSupport>
-    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <CLRSupport>NetCore</CLRSupport>
-    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -86,12 +63,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)BUILD\APIWrapper\$(Configuration)\</OutDir>
     <TargetExt>.asi</TargetExt>
-    <OutDir>$(SolutionDir)BUILD\NetModAPI\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetExt>.asi</TargetExt>
-    <OutDir>$(SolutionDir)BUILD\NetModAPI\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)BUILD\APIWrapper\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
   </PropertyGroup>
@@ -156,6 +133,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="NLog">
+      <Version>5.1.1</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
     <ResourceCompile Include="app.rc" />
   </ItemGroup>
   <ItemGroup>
@@ -165,14 +147,11 @@
     <Xml Include="iwjdependency.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NLog">
-      <Version>5.1.1</Version>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <_EmbedManagedResourceFile Include="lib\managed\NLog.dll">
-      <FileType>Document</FileType>
-    </_EmbedManagedResourceFile>
+    <Reference Include="NLog">
+      <HintPath>lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Linq" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

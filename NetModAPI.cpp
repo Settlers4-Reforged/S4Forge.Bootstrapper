@@ -89,6 +89,9 @@ bool NetModAPI::NetModAPI::LoadAllPlugins() {
 			auto types = gcnew List<Type^> (pluginAssembly->GetTypes());
 
 			Type^ pluginClass = Enumerable::SingleOrDefault(Enumerable::Where(types, gcnew Func<Type^, bool>(&IsIPlugin)));
+			if(pluginClass == nullptr)
+				continue;
+
 			IPlugin^ plugin = static_cast<IPlugin^>(Activator::CreateInstance(pluginClass));
 			plugin->Initialize();
 		} catch(Exception^ e) {

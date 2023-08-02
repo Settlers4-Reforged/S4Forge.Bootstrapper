@@ -105,9 +105,4 @@
       <Filter>Resource Files</Filter>
     </Xml>
   </ItemGroup>
-  <ItemGroup>
-    <_EmbedManagedResourceFile Include="lib\managed\NLog.dll">
-      <Filter>Resource Files\Resources</Filter>
-    </_EmbedManagedResourceFile>
-  </ItemGroup>
 </Project>

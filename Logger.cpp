@@ -17,7 +17,7 @@ static NetModAPI::Logger::Logger() {
 
     // Targets where to log to: File and Console
     FileTarget^ logFile = gcnew FileTarget("logfile");
-    logFile->FileName = Layouts::Layout::FromString("plugins/s4-netmodapi.txt");
+    logFile->FileName = Layouts::Layout::FromString("plugins/s4-forge.txt");
     logFile->DeleteOldFileOnStartup = true;
     ColoredConsoleTarget^ logConsole = gcnew ColoredConsoleTarget("logconsole");
     logConsole->DetectConsoleAvailable = true;
