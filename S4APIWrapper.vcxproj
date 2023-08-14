@@ -21,6 +21,7 @@
     <OutputType>Lib</OutputType>
     <TargetExt>.asi</TargetExt>
     <Platforms>x86</Platforms>
+    <TargetFramework>net48</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
@@ -28,7 +29,6 @@
     <PlatformToolset>v143</PlatformToolset>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
-    <TargetExt>.asi</TargetExt>
     <OutDir>$(SolutionDir)BUILD\APIWrapper\$(Configuration)\</OutDir>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -36,12 +36,6 @@
     <UseDebugLibraries>true</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <UseDebugLibraries>false</UseDebugLibraries>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <UseDebugLibraries>true</UseDebugLibraries>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <UseDebugLibraries>false</UseDebugLibraries>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -55,12 +49,6 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)BUILD\APIWrapper\$(Configuration)\</OutDir>
@@ -69,8 +57,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetExt>.asi</TargetExt>
     <OutDir>$(SolutionDir)BUILD\APIWrapper\$(Configuration)\</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -106,6 +92,37 @@
       <AdditionalManifestFiles>iwjdependency.xml</AdditionalManifestFiles>
     </Manifest>
   </ItemDefinitionGroup>
+
+  <!--NuGet:-->
+  <ItemGroup>
+    <PackageReference Pack="false" Include="NuGet.Build.Tasks.Pack" Version="5.2.0">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <Content Include="BUILD\APIWrapper\$(Configuration)\*.asi">
+      <Pack>true</Pack>
+      <PackagePath>lib/net48</PackagePath>
+    </Content>
+    <Content Include="NuGet/S4APIWrapper.targets">
+      <Pack>true</Pack>
+      <PackagePath>build/</PackagePath>
+    </Content>
+  </ItemGroup>
+  <PropertyGroup>
+    <PackageId>S4APIWrapper</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>WizzardMaker</Authors>
+    <Description>Thin .Net wrapper for the Settlers 4 Mod API by Nyfrik</Description>
+    <IncludeBuildOutput>true</IncludeBuildOutput>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageOutputPath>$(SolutionDir)BUILD\NuGet\</PackageOutputPath>
+    <!--
+      GeneratePackageOnBuild should stay false, because we have to manually add the nasi file
+      after build and NuGet thinks is smart and includes non build files *before* the build finished...
+    -->
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+  </PropertyGroup>
+
   <ItemGroup>
     <ClInclude Include="globals.h" />
     <ClInclude Include="IPlugin.h" />
@@ -131,11 +148,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="NLog">
-      <Version>5.1.1</Version>
-    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc" />
