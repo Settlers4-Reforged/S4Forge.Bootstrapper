@@ -11,7 +11,8 @@ namespace NetModAPI {
 
 		static void LogInfo(String^ msg);
 		static void LogDebug(String^ msg);
-        static void LogError(String^ msg, Exception^ exception);
+		static void LogWarn(String^ msg);
+		static void LogError(String^ msg, Exception^ exception);
 	};
 }
 
