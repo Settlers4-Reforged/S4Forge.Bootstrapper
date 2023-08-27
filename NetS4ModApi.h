@@ -8,7 +8,7 @@ using namespace Runtime::InteropServices;
 using namespace Collections::Generic;
 
 namespace NetModAPI {
-	public ref class NetS4ModApi {
+	ref class NetS4ModApi {
 	private:
 		static S4API s4;
 

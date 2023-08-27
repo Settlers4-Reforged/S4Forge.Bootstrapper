@@ -3,7 +3,7 @@
 using namespace System;
 
 namespace NetModAPI {
-	public ref class Logger abstract sealed {
+	ref class Logger abstract sealed {
 		static NLog::ILogger^ log = nullptr;
 
 	public:

@@ -19,3 +19,8 @@ using namespace System::Security::Permissions;
 [assembly:AssemblyFileVersionAttribute(L"1.0.0.0")] ;
 
 [assembly:ComVisible(false)];
+
+// Limit visibility to Forge for now
+// This Wrapper should only really ever be used by Forge
+// Especially because Forge wraps the full functionality (hopefully...)
+[assembly:InternalsVisibleToAttribute("S4Forge")] ;
