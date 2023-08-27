@@ -19,6 +19,7 @@ static NetModAPI::Logger::Logger() {
     FileTarget^ logFile = gcnew FileTarget("logfile");
     logFile->FileName = Layouts::Layout::FromString("plugins/s4-forge.txt");
     logFile->DeleteOldFileOnStartup = true;
+    logFile->CreateDirs = true;
     ColoredConsoleTarget^ logConsole = gcnew ColoredConsoleTarget("logconsole");
     logConsole->DetectConsoleAvailable = true;
 
@@ -38,6 +39,10 @@ void NetModAPI::Logger::LogInfo(String^ msg) {
 
 void NetModAPI::Logger::LogDebug(String^ msg) {
     log->Debug(msg);
+}
+
+void NetModAPI::Logger::LogWarn(String^ msg) {
+    log->Warn(msg);
 }
 
 void NetModAPI::Logger::LogError(String^ msg, Exception^ exception) {

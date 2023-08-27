@@ -1,11 +1,13 @@
 #include "pch.h"
 #include "ManagedLoader.h"
+
+#pragma managed(push, off)
+
 #include <filesystem>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <tlhelp32.h>
 
-#pragma managed(push, off)
 S4API ModAPI;
 
 static void CleanUp() {
@@ -48,7 +50,7 @@ extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPV
     //MessageBoxA(nullptr, "NetModAPI DEBUG", "NetModAPI", 0);
     switch (ul_reason_for_call) {
     case DLL_PROCESS_ATTACH: {
-
+#ifndef TEST
         if (GetAsyncKeyState(VK_F2)) {
             return TRUE;
         }
@@ -80,6 +82,7 @@ extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPV
 #endif // !PUBLIC
 
         if (!Init()) break;
+#endif
         break;
     }
     case DLL_THREAD_ATTACH:
