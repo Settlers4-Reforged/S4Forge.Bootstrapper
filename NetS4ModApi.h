@@ -1,7 +1,8 @@
 #pragma once
 
-#pragma make_public(IDirectDrawSurface7)
 #include "S4Hooks.h"
+
+#pragma make_public(IDirectDrawSurface7)
 
 using namespace System;
 using namespace Runtime::InteropServices;
@@ -41,7 +42,7 @@ namespace NetModAPI {
 		delegate HRESULT S4GuiDrawCallback(LPS4GUIDRAWBLTPARAMS entity, BOOL discard);
 		delegate HRESULT S4GuiClearCallback(LPS4GUICLEARPARAMS entity, BOOL discard);
 
-#define CALLBACK_ADD(name, list, type) std::function<type> fun = static_cast<LP##type>(Marshal::GetFunctionPointerForDelegate(name).ToPointer());auto callback = CreateCallback<type>(&fun); list##.emplace_back(callback); return callback->id
+#define CALLBACK_ADD(name, list, type) GCHandle::Alloc(name);std::function<type> fun = static_cast<LP##type>(Marshal::GetFunctionPointerForDelegate(name).ToPointer());auto callback = CreateCallback<type>(&fun); list##.emplace_back(callback); return callback->id
 
 		/** Hooks/Observers **/
 		void RemoveListener(S4HOOK hook) {
