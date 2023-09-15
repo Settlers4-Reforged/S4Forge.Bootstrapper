@@ -22,6 +22,7 @@ namespace NetModAPI {
 			s4->AddUIFrameListener(&CS4UIFrameCallback, S4_GUI_UNKNOWN);
 			s4->AddMapInitListener(&CS4MapInitCallback);
 			s4->AddSettlerSendListener(&CS4SettlerSendCallback);
+			s4->AddMouseListener(&CS4MouseCallback);
 			s4->AddTickListener(&CS4TickCallback);
 			s4->AddLuaOpenListener(&CS4LuaOpenCallback);
 			s4->AddBltListener(&CS4BltCallback);
