@@ -1,7 +1,9 @@
 #include "pch.h"
 
-#include "IPlugin.h"
+#include "IForge.h"
 #include "NetModAPI.h"
+
+#include "Logger.h"
 
 using namespace System;
 using namespace IO;
@@ -13,7 +15,7 @@ bool IsIPlugin(Type^ type) {
 	if (type->IsInterface)
 		return false;
 
-	Type^ pluginInterface = NetModAPI::IPlugin::typeid;
+	Type^ pluginInterface = NetModAPI::IForge::typeid;
 
 	for each(Type^ interf in type->GetInterfaces()) {
 		if (interf->FullName == pluginInterface->FullName)
@@ -25,7 +27,7 @@ bool IsIPlugin(Type^ type) {
 
 Assembly^ AssemblyLoader(Object^ sender, ResolveEventArgs^ args) {
 	auto loadedAssemblies = System::AppDomain::CurrentDomain->GetAssemblies();
-
+	
 	for each(Assembly^ a in loadedAssemblies) {
 		if (a->FullName == args->Name)
 			return a;
@@ -34,7 +36,7 @@ Assembly^ AssemblyLoader(Object^ sender, ResolveEventArgs^ args) {
 	String^ resourceName = (gcnew AssemblyName(args->Name))->Name + ".dll";
 
 	String^ resource = nullptr;
-	auto embeddedAssemblies = (NetModAPI::IPlugin::typeid)->Assembly->GetManifestResourceNames();
+	auto embeddedAssemblies = (NetModAPI::IForge::typeid)->Assembly->GetManifestResourceNames();
 	for each(String^ a in embeddedAssemblies) {
 		if(a->EndsWith(resourceName)) {
 			resource = a;
@@ -56,7 +58,7 @@ Assembly^ AssemblyLoader(Object^ sender, ResolveEventArgs^ args) {
 	String^ folderPath = Path::GetDirectoryName(args->RequestingAssembly->Location);
 	if (folderPath == nullptr)
 		folderPath = "";
-	String^ rawAssemblyPath = Path::Combine(folderPath, (gcnew System::Reflection::AssemblyName(args->Name))->Name);
+	String^ rawAssemblyPath = Path::Combine(folderPath, (gcnew AssemblyName(args->Name))->Name);
 
 	String^ assemblyPath = rawAssemblyPath + ".dll";
 
@@ -66,44 +68,45 @@ Assembly^ AssemblyLoader(Object^ sender, ResolveEventArgs^ args) {
 		if (!File::Exists(assemblyPath)) return nullptr;
 	}
 
-	auto assembly = System::Reflection::Assembly::LoadFrom(assemblyPath);
+	auto assembly = Assembly::LoadFrom(assemblyPath);
 	return assembly;
 }
 
-bool NetModAPI::NetModAPI::LoadAllPlugins() {
-	array<String^>^ files = Directory::GetFiles(Environment::CurrentDirectory + "/plugins/", PluginExtension);
-
+bool NetModAPI::NetModAPI::LoadForge() {
 #pragma warning(suppress : 4947)
 	AppDomain::CurrentDomain->AppendPrivatePath("plugins\\");
 
 	AppDomain^ currentDomain = AppDomain::CurrentDomain;
 	currentDomain->AssemblyResolve += gcnew ResolveEventHandler(&AssemblyLoader);
 
-	for each (String^ file in files) {
-		try {
-			String^ msg = String::Format("Loading Plugin Assembly '{0}'...", file);
-			Console::WriteLine(msg);
-			MessageBox(nullptr, static_cast<LPCWSTR>(Runtime::InteropServices::Marshal::StringToHGlobalUni(msg).ToPointer()), L"Loader", 0);
-			Assembly^ pluginAssembly = Assembly::LoadFrom(file);
-
-			auto types = gcnew List<Type^> (pluginAssembly->GetTypes());
-
-			Type^ pluginClass = Enumerable::SingleOrDefault(Enumerable::Where(types, gcnew Func<Type^, bool>(&IsIPlugin)));
-			if(pluginClass == nullptr)
-				continue;
-
-			IPlugin^ plugin = static_cast<IPlugin^>(Activator::CreateInstance(pluginClass));
-			plugin->Initialize();
-		} catch(Exception^ e) {
-			String^ stackTrace = e->StackTrace;
-			while(e->InnerException != nullptr) {
-				e = e->InnerException;
-			}
-
-			String^ errorMsg = String::Format("Error during load of Assembly '{0}'\nError: {1}\n\n============= Stack Trace =============\n{2}", file, e->Message, stackTrace);
-			MessageBox(nullptr, static_cast<LPCWSTR>(Runtime::InteropServices::Marshal::StringToHGlobalUni(errorMsg).ToPointer()), L"Loader", 0);
-		}
+	String^ file = "plugins\\S4Forge.dll";
+	if (!File::Exists(file)) {
+		Logger::LogError("S4Forge.dll not found in plugins folder!", nullptr);
+		return false;
 	}
 
+	Logger::LogInfo("Loading S4Forge Assembly...");
+
+	try {
+		Assembly^ pluginAssembly = Assembly::LoadFrom(file);
+		auto types = gcnew List<Type^>(pluginAssembly->GetTypes());
+
+		Type^ pluginClass = Enumerable::SingleOrDefault(Enumerable::Where(types, gcnew Func<Type^, bool>(&IsIPlugin)));
+		if (pluginClass == nullptr)
+			return false;
+
+		IForge^ plugin = static_cast<IForge^>(Activator::CreateInstance(pluginClass));
+
+		Logger::LogInfo("Initializing S4Forge...");
+		plugin->Initialize();
+	} catch (Exception^ e) {
+		String^ stackTrace = e->StackTrace;
+		while (e->InnerException != nullptr) {
+			e = e->InnerException;
+		}
+
+		String^ errorMsg = String::Format("Error during load of Forge \nError: {1}\n\n============= Stack Trace =============\n{2}", e->Message, stackTrace);
+		Logger::LogError(errorMsg, e);
+	}
 	return true;
 }

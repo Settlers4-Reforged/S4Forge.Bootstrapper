@@ -3,6 +3,6 @@
 #include "ManagedLoader.h"
 
 DWORD __stdcall InitPlugins(void* param) {
-    NetModAPI::NetModAPI::LoadAllPlugins();
+    NetModAPI::NetModAPI::LoadForge();
     return 0;
 }

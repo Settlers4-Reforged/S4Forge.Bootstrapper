@@ -4,6 +4,6 @@ namespace NetModAPI {
 	private ref class NetModAPI
 	{
 	public:
-		static bool LoadAllPlugins();
+		static bool LoadForge();
 	};
 }

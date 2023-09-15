@@ -51,7 +51,7 @@
     <ClInclude Include="NetS4ModApi.h">
       <Filter>Header Files\ModAPI</Filter>
     </ClInclude>
-    <ClInclude Include="IPlugin.h">
+    <ClInclude Include="IForge.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ManagedIncludes.h">
@@ -104,5 +104,8 @@
     <Xml Include="iwjdependency.xml">
       <Filter>Resource Files</Filter>
     </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lib\s4modapi\S4ModApi.dll" />
   </ItemGroup>
 </Project>
