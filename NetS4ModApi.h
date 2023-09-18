@@ -28,6 +28,7 @@ namespace NetModAPI {
 			s4->AddBltListener(&CS4BltCallback);
 			s4->AddEntityListener(&CS4EntityCallback);
 			s4->AddGuiBltListener(&CS4GUIBltCallback);
+			s4->AddGuiElementBltListener(&CS4GUIDrawCallback);
 			s4->AddGuiClearListener(&CS4GUIClearCallback);
 		}
 
