@@ -66,6 +66,9 @@
     <ClInclude Include="Logger.h">
       <Filter>Header Files\ModAPI\Logger</Filter>
     </ClInclude>
+    <ClInclude Include="Patching.h">
+      <Filter>Header Files\ModAPI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -88,6 +91,9 @@
     </ClCompile>
     <ClCompile Include="ManagedLoader.cpp">
       <Filter>Source Files\Init</Filter>
+    </ClCompile>
+    <ClCompile Include="Patching.cpp">
+      <Filter>Source Files\ModAPI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

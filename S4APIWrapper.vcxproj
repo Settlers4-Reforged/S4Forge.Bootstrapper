@@ -165,6 +165,7 @@
     <ClInclude Include="ManagedLoader.h" />
     <ClInclude Include="NetModAPI.h" />
     <ClInclude Include="NetS4ModApi.h" />
+    <ClInclude Include="Patching.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="S4Hooks.h" />
@@ -176,6 +177,7 @@
     <ClCompile Include="ManagedLoader.cpp" />
     <ClCompile Include="NetModAPI.cpp" />
     <ClCompile Include="NetS4ModApi.cpp" />
+    <ClCompile Include="Patching.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">Create</PrecompiledHeader>
