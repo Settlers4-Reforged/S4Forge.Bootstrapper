@@ -89,6 +89,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EmbedManagedResourceFile>$(ProjectDir)lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>iwjdependency.xml</AdditionalManifestFiles>
@@ -105,6 +106,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EmbedManagedResourceFile>$(ProjectDir)lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>iwjdependency.xml</AdditionalManifestFiles>
@@ -123,6 +125,7 @@
       <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalManifestDependencies>
       </AdditionalManifestDependencies>
+      <EmbedManagedResourceFile>$(ProjectDir)lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>iwjdependency.xml</AdditionalManifestFiles>
@@ -196,6 +199,8 @@
   <ItemGroup>
     <Reference Include="NLog">
       <HintPath>lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll</HintPath>
+      <Private>false</Private>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Linq" />
