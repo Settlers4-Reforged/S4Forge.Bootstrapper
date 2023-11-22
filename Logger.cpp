@@ -12,25 +12,42 @@ using namespace System::Diagnostics;
 using namespace NLog;
 using namespace NLog::Targets;
 
+FileTarget^ NetModAPI::Logger::CreateFileLogger(String^ log_path, String^ log_suffix) {
+    FileTarget^ log_file = gcnew FileTarget("logfile");
+    log_file->FileName = Layouts::Layout::FromString(log_path + "latest" + log_suffix + ".txt");
+    log_file->ArchiveOldFileOnStartup = true;
+    log_file->Footer = Layouts::Layout::FromString("End of log");
+    log_file->ArchiveFileName = Layouts::Layout::FromString(log_path + "log" + log_suffix + ".{#}.txt");
+    log_file->MaxArchiveFiles = 5;
+    log_file->CreateDirs = true;
+    log_file->AutoFlush = true;
+
+    return log_file;
+}
+
 static NetModAPI::Logger::Logger() {
     auto config = gcnew Config::LoggingConfiguration();
 
+    String^ log_path = "plugins/Forge/Logs/";
+
     // Targets where to log to: File and Console
-    FileTarget^ logFile = gcnew FileTarget("logfile");
-    logFile->FileName = Layouts::Layout::FromString("plugins/s4-forge.txt");
-    logFile->DeleteOldFileOnStartup = true;
-    logFile->CreateDirs = true;
-    ColoredConsoleTarget^ logConsole = gcnew ColoredConsoleTarget("logconsole");
+    FileTarget^ log_file = CreateFileLogger(log_path, "");
+    FileTarget^ error_log_file = CreateFileLogger(log_path, "-error");
+    ColoredConsoleTarget^      logConsole = gcnew ColoredConsoleTarget("logconsole");
     logConsole->DetectConsoleAvailable = true;
 
     // Rules for mapping loggers to targets
     config->AddRule(LogLevel::Debug, LogLevel::Fatal, logConsole, "*");
-	config->AddRule(LogLevel::Debug, LogLevel::Fatal, logFile, "*");
+    config->AddRule(LogLevel::Debug, LogLevel::Fatal, log_file, "*");
+    config->AddRule(LogLevel::Debug, LogLevel::Fatal, error_log_file, "error");
 
     // Apply config           
     LogManager::Configuration = config;
     log = LogManager::GetLogger("global");
     log->Info("Started logging");
+
+    error_log = LogManager::GetLogger("error");
+    error_log->Info("Started Error logging");
 }
 
 void NetModAPI::Logger::LogInfo(String^ msg) {
@@ -46,11 +63,11 @@ void NetModAPI::Logger::LogWarn(String^ msg) {
 }
 
 void NetModAPI::Logger::LogError(String^ msg, Exception^ exception) {
-    Debugger::Break();
-    if (log != nullptr)
+    if (error_log != nullptr)
     {
-        log->Error(exception, msg);
+        error_log->Error(exception, msg);
     }
+    Debugger::Break();
 }
 
 #pragma warning(pop)
