@@ -20,7 +20,7 @@ using namespace System::Security::Permissions;
 
 [assembly:ComVisible(false)];
 
-// Limit visibility to Forge for now
+// Limits visibility of mostly everything to Forge for now
 // This Wrapper should only really ever be used by Forge
 // Especially because Forge wraps the full functionality (hopefully...)
 [assembly:InternalsVisibleToAttribute("S4Forge")] ;

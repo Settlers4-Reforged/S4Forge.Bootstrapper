@@ -23,7 +23,7 @@ static bool Init() {
 
     auto h = CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(&InitPlugins), nullptr, 0, nullptr);
 
-    //wait until the thread is done or an exception occured in the thread
+    //wait until the thread is done or an exception occurred in the thread
     WaitForSingleObject(h, 15000/*ms*/);
 
     return true;
