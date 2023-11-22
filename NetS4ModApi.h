@@ -30,6 +30,8 @@ namespace NetModAPI {
 			s4->AddGuiBltListener(&CS4GUIBltCallback);
 			s4->AddGuiElementBltListener(&CS4GUIDrawCallback);
 			s4->AddGuiClearListener(&CS4GUIClearCallback);
+
+			oldWndProc = SetWindowLongPtr(s4->GetHwnd(), GWLP_WNDPROC, (LONG_PTR)HookedWndProcedure);
 		}
 
 		delegate HRESULT S4FrameCallback(LPDIRECTDRAWSURFACE7 lpSurface, INT32 iPillarboxWidth, LPVOID lpReserved);
@@ -43,6 +45,7 @@ namespace NetModAPI {
 		delegate HRESULT S4EntityCallback(WORD entity, S4_ENTITY_CAUSE cause); // called when an entity is spawned or destructed // todo: implement me
 		delegate HRESULT S4GuiDrawCallback(LPS4GUIDRAWBLTPARAMS entity, BOOL discard);
 		delegate HRESULT S4GuiClearCallback(LPS4GUICLEARPARAMS entity, BOOL discard);
+		delegate LRESULT S4WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 #define CALLBACK_ADD(name, list, type) GCHandle::Alloc(name);std::function<type> fun = static_cast<LP##type>(Marshal::GetFunctionPointerForDelegate(name).ToPointer());auto callback = CreateCallback<type>(&fun); list##.emplace_back(callback); return callback->id
 
@@ -92,6 +95,17 @@ namespace NetModAPI {
 		HRESULT QueryInterface(REFIID riid, LPVOID FAR* ppvObj) { return s4->QueryInterface(riid, ppvObj); }
 		ULONG  AddRef() { return s4->AddRef(); }
 		ULONG  Release() { return s4->Release(); }
+
+		/** WndProc **/
+		S4HOOK  AddWndProc(S4WndProc^ clbk) {
+			GCHandle::Alloc(clbk);
+			std::function<S4WNDPROC> fun = static_cast<WNDPROC>(Marshal::GetFunctionPointerForDelegate(clbk).ToPointer());
+			auto callback = CreateCallback<S4WNDPROC>(&fun);
+			S4WndProcList.emplace_back(callback);
+			return callback->id;
+		}
+
+
 
 		/** ISettlers4Api methods **/
 		LPVOID  GetDebugData(LPVOID a, LPVOID b) { return s4->GetDebugData(a, b); }

@@ -35,7 +35,7 @@ typedef BOOL(S4GUIBLTCALLBACK)(LPS4GUIBLTPARAMS params, BOOL discard);
 typedef HRESULT(S4ENTITYCALLBACK)(WORD entity, S4_ENTITY_CAUSE cause); // called when an entity is spawned or destructed // todo: implement me
 typedef HRESULT(S4GUIDRAWCALLBACK)(LPS4GUIDRAWBLTPARAMS entity, BOOL discard);
 typedef HRESULT(S4GUICLEARCALLBACK)(LPS4GUICLEARPARAMS entity, BOOL discard);
-
+typedef LRESULT(S4WNDPROC)(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 
 #define DEFINE_CALLBACK_LIST(type, name) extern std::vector<Callback<type>*> name##List;
 
@@ -52,6 +52,7 @@ DEFINE_CALLBACK_LIST(S4GUIBLTCALLBACK, S4GUIBltCallback)
 DEFINE_CALLBACK_LIST(S4ENTITYCALLBACK, S4EntityCallback)
 DEFINE_CALLBACK_LIST(S4GUIDRAWCALLBACK, S4GUIDrawCallback)
 DEFINE_CALLBACK_LIST(S4GUICLEARCALLBACK, S4GUIClearCallback)
+DEFINE_CALLBACK_LIST(S4WNDPROC, S4WndProc)
 
 template<class func, class... Rest>
 static HRESULT HandleCallback(std::vector<Callback<func>*> functions, Rest... rest) {
@@ -90,7 +91,7 @@ static void RemoveAnyCallback(int index) {
 	CONDITIONAL(RemoveCallback(index,S4EntityCallbackList));
 	CONDITIONAL(RemoveCallback(index,S4GUIDrawCallbackList));
 	CONDITIONAL(RemoveCallback(index,S4GUIClearCallbackList));
-
+	CONDITIONAL(RemoveCallback(index,S4WndProcList));
 }
 
 
@@ -129,6 +130,14 @@ static HRESULT __stdcall CS4GUIDrawCallback(LPS4GUIDRAWBLTPARAMS entity, BOOL di
 }
 static HRESULT __stdcall CS4GUIClearCallback(LPS4GUICLEARPARAMS entity, BOOL discard) {
 	return HandleCallback(S4GUIClearCallbackList, entity, discard);
+}
+
+
+extern LONG_PTR oldWndProc;
+static LRESULT CALLBACK HookedWndProcedure(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	HandleCallback(S4WndProcList, hwnd, uMsg, wParam, lParam);
+
+	return CallWindowProc((WNDPROC)oldWndProc, hwnd, uMsg, wParam, lParam);
 }
 
 
