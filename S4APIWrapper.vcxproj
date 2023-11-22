@@ -107,6 +107,7 @@
     <Link>
       <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EmbedManagedResourceFile>$(ProjectDir)lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
+      <DelayLoadDLLs>S4ModAPI.dll</DelayLoadDLLs>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>iwjdependency.xml</AdditionalManifestFiles>
