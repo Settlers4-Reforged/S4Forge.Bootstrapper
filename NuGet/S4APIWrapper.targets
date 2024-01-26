@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0"
          xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Reference Include="$(MSBuildThisFileDirectory)..\lib\net8.0-windows7.0\S4APIWrapper.asi">
+    <Reference Include="$(MSBuildThisFileDirectory)..\lib\net80\S4APIWrapper.asi">
     </Reference>
   </ItemGroup>
 </Project>

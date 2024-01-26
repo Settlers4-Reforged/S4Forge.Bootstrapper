@@ -138,7 +138,7 @@
     </PackageReference>
     <Content Include="BUILD\APIWrapper\$(Configuration)\*.asi">
       <Pack>true</Pack>
-      <PackagePath>lib/net48</PackagePath>
+      <PackagePath>lib/net80</PackagePath>
     </Content>
     <Content Include="NuGet/S4APIWrapper.targets">
       <Pack>true</Pack>
