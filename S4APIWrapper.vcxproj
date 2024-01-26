@@ -133,7 +133,7 @@
   </ItemDefinitionGroup>
   <!--NuGet:-->
   <ItemGroup>
-    <PackageReference Pack="false" Include="NuGet.Build.Tasks.Pack" Version="5.2.0">
+    <PackageReference Pack="false" Include="NuGet.Build.Tasks.Pack" Version="6.8.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <Content Include="BUILD\APIWrapper\$(Configuration)\*.asi">
@@ -152,6 +152,7 @@
     <Description>Thin .Net wrapper for the Settlers 4 Mod API by Nyfrik</Description>
     <IncludeBuildOutput>true</IncludeBuildOutput>
     <IncludeSymbols>true</IncludeSymbols>
+    <IsPackable>true</IsPackable>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageOutputPath>$(SolutionDir)BUILD\NuGet\</PackageOutputPath>
     <!--
