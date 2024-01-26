@@ -34,6 +34,12 @@
     <Filter Include="Resource Files\Resources">
       <UniqueIdentifier>{c9d4091d-d8fd-46ae-9090-35643d1b9272}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\DirectX">
+      <UniqueIdentifier>{78f968c6-3ac2-40a6-bb3a-0be3ca69694f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DirectX\DirectDraw">
+      <UniqueIdentifier>{a0a36607-9b2f-4d0a-a3b6-1a081fe08285}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NetModAPI.h">
@@ -68,6 +74,15 @@
     </ClInclude>
     <ClInclude Include="Patching.h">
       <Filter>Header Files\ModAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="Device.h">
+      <Filter>Header Files\DirectX\DirectDraw</Filter>
+    </ClInclude>
+    <ClInclude Include="Surface.h">
+      <Filter>Header Files\DirectX\DirectDraw</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX.h">
+      <Filter>Header Files\DirectX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

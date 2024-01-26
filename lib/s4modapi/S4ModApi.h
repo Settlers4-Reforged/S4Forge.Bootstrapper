@@ -48,7 +48,7 @@ typedef interface ISettlers4Api2 FAR * LPSETTLERS4API2;
 typedef UINT32 S4HOOK;
 typedef LPVOID S4CUSTOMUI;
 
-public enum S4_EDITION_ENUM : DWORD {
+public enum class S4_EDITION_ENUM : DWORD {
 	S4_EDITION_GOLD = 1,
 	S4_EDITION_HISTORY = 2,
 };

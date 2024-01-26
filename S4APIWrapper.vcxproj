@@ -21,17 +21,16 @@
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>Forge.ModAPI</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
     <OutputType>Lib</OutputType>
     <TargetExt>.asi</TargetExt>
     <Platforms>x86</Platforms>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v143</PlatformToolset>
-    <CLRSupport>true</CLRSupport>
+    <CLRSupport>NetCore</CLRSupport>
+    <TargetFramework>net8.0</TargetFramework>
     <CharacterSet>Unicode</CharacterSet>
     <OutDir>$(SolutionDir)BUILD\APIWrapper\$(Configuration)\</OutDir>
   </PropertyGroup>
@@ -92,7 +91,7 @@
       <EmbedManagedResourceFile>$(ProjectDir)lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
     <Manifest>
-      <AdditionalManifestFiles>iwjdependency.xml</AdditionalManifestFiles>
+      <AdditionalManifestFiles>ijwdependency.xml</AdditionalManifestFiles>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">
@@ -110,7 +109,7 @@
       <DelayLoadDLLs>S4ModAPI.dll</DelayLoadDLLs>
     </Link>
     <Manifest>
-      <AdditionalManifestFiles>iwjdependency.xml</AdditionalManifestFiles>
+      <AdditionalManifestFiles>ijwdependency.xml</AdditionalManifestFiles>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -129,7 +128,7 @@
       <EmbedManagedResourceFile>$(ProjectDir)lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
     <Manifest>
-      <AdditionalManifestFiles>iwjdependency.xml</AdditionalManifestFiles>
+      <AdditionalManifestFiles>ijwdependency.xml</AdditionalManifestFiles>
     </Manifest>
   </ItemDefinitionGroup>
   <!--NuGet:-->
@@ -162,6 +161,8 @@
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
+    <ClInclude Include="Device.h" />
+    <ClInclude Include="DirectX.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="IForge.h" />
     <ClInclude Include="Logger.h" />
@@ -173,6 +174,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="S4Hooks.h" />
+    <ClInclude Include="Surface.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
@@ -195,7 +197,7 @@
     <Image Include="app.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="iwjdependency.xml" />
+    <Xml Include="ijwdependency.xml" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="NLog">
@@ -203,8 +205,6 @@
       <Private>false</Private>
       <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
     </Reference>
-    <Reference Include="System.Core" />
-    <Reference Include="System.Linq" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\s4modapi\S4ModApi.dll">
