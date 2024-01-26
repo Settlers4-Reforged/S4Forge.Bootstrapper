@@ -122,9 +122,7 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="iwjdependency.xml">
-      <Filter>Resource Files</Filter>
-    </Xml>
+    <Xml Include="ijwdependency.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\s4modapi\S4ModApi.dll" />
