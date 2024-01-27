@@ -30,11 +30,11 @@ bool NetModAPI::NetModAPI::LoadForge() {
 
 	String^ file = "plugins\\S4Forge.dll";
 	if (!File::Exists(file)) {
-		Logger::LogError("S4Forge.dll not found in plugins folder!", nullptr);
+		Logger::LogError("S4Forge.dll not found in plugins folder!", nullptr, nullptr);
 		return false;
 	}
 
-	Logger::LogInfo("Loading S4Forge Assembly...");
+	Logger::LogInfo("Loading S4Forge Assembly...", nullptr);
 
 	try {
 		Assembly^ pluginAssembly = Assembly::LoadFrom(file);
@@ -46,7 +46,7 @@ bool NetModAPI::NetModAPI::LoadForge() {
 
 		IForge^ plugin = static_cast<IForge^>(Activator::CreateInstance(pluginClass));
 
-		Logger::LogInfo("Initializing S4Forge...");
+		Logger::LogInfo("Initializing S4Forge...", nullptr);
 		plugin->Initialize();
 	} catch (Exception^ e) {
 		String^ stackTrace = e->StackTrace;
@@ -55,7 +55,7 @@ bool NetModAPI::NetModAPI::LoadForge() {
 		}
 
 		String^ errorMsg = String::Format("Error during load of Forge \nError: {1}\n\n============= Stack Trace =============\n{2}", e->Message, stackTrace);
-		Logger::LogError(errorMsg, e);
+		Logger::LogError(errorMsg, e, nullptr);
 	}
 	return true;
 }
