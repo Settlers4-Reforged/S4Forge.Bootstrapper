@@ -65,11 +65,11 @@ extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVO
     switch(ul_reason_for_call) {
     case DLL_PROCESS_ATTACH:
         {
+#ifndef TEST
             DWORD           S4_Main = reinterpret_cast<DWORD>(GetModuleHandle(nullptr));
             hlib::CallPatch patch = hlib::CallPatch(S4_Main + 0x5C489, reinterpret_cast<DWORD>(&WaitForPlugins));
             patch.patch();
 
-#ifndef TEST
             if(GetAsyncKeyState(VK_F2)) {
                 return TRUE;
             }
