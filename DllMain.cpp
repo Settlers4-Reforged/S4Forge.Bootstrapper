@@ -5,6 +5,7 @@
 
 #include <filesystem>
 #define WIN32_LEAN_AND_MEAN
+#include <iostream>
 #include <windows.h>
 #include <tlhelp32.h>
 
@@ -17,14 +18,24 @@ static void CleanUp() {
     }
 };
 
+HANDLE forge_init_thread_handle = nullptr;
+
+static char WaitForPlugins() {
+    if(forge_init_thread_handle != nullptr) {
+        WaitForSingleObject(forge_init_thread_handle, INFINITE);
+        forge_init_thread_handle = nullptr;
+    }
+
+    return 1;
+}
+
 static bool Init() {
+    CrashHandling::InstallCrashHandler();
+
     ModAPI = S4ApiCreate(); // get an interface to the mod api
     if (ModAPI == nullptr) return false;
 
-    auto h = CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(&InitPlugins), nullptr, 0, nullptr);
-
-    //wait until the thread is done or an exception occurred in the thread
-    WaitForSingleObject(h, 15000/*ms*/);
+    forge_init_thread_handle = CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(&InitPlugins), nullptr, 0, nullptr);
 
     return true;
 }
@@ -53,6 +64,11 @@ extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPV
     //MessageBoxA(nullptr, "NetModAPI DEBUG", "NetModAPI", 0);
     switch (ul_reason_for_call) {
     case DLL_PROCESS_ATTACH: {
+
+        DWORD S4_Main = reinterpret_cast<DWORD>(GetModuleHandle(nullptr));
+        hlib::CallPatch patch = hlib::CallPatch(S4_Main + 0x5C489, reinterpret_cast<DWORD>(&WaitForPlugins));
+        patch.patch();
+
 #ifndef TEST
         if (GetAsyncKeyState(VK_F2)) {
             return TRUE;
@@ -65,7 +81,7 @@ extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPV
         const std::filesystem::path process_file_path(process_name);
 
         const std::string parentName = process_file_path.filename().string();
-        
+
         // abort if we're not called from Ubisoft Launcher or Internal Call... (Prevents loading in first call)
         if (_stricmp(parentName.c_str(), "UbisoftGameLauncher.exe") != 0 &&
             _stricmp(parentName.c_str(), "UbisoftGameLauncher64.exe") != 0 &&
