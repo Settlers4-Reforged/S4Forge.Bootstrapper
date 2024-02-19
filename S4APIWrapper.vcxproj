@@ -79,7 +79,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <PreprocessorDefinitions Condition="'$(AssemblyVersion)'!=''">FORGE_VERSION=$(AssemblyVersion);</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(AssemblyVersion)'!=''">FORGE_VERSION=$(AssemblyVersion);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

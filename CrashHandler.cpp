@@ -55,7 +55,7 @@ bool CrashHandling::InstallCrashHandler() {
         CR_INSTALL_INFO info{};
         info.cb = sizeof(CR_INSTALL_INFO);
         info.pszAppName = (L"Settlers4-Forge");
-        info.pszAppVersion = FORGE_VERSION;
+        info.pszAppVersion = FORGE_VERSION_STRING;
         info.pszUrl = uploadEndpoint.c_str();
         info.uPriorities[CR_HTTP] = 1;  // First try send report over HTTP 
         info.uPriorities[CR_SMTP] = CR_NEGATIVE_PRIORITY;  // SKIP
