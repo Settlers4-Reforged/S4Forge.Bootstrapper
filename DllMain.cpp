@@ -12,7 +12,7 @@
 S4API ModAPI;
 
 static void CleanUp() {
-    if (nullptr != ModAPI) {
+    if(nullptr != ModAPI) {
         ModAPI->Release();
         ModAPI = nullptr;
     }
@@ -33,7 +33,7 @@ static bool Init() {
     CrashHandling::InstallCrashHandler();
 
     ModAPI = S4ApiCreate(); // get an interface to the mod api
-    if (ModAPI == nullptr) return false;
+    if(ModAPI == nullptr) return false;
 
     forge_init_thread_handle = CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(&InitPlugins), nullptr, 0, nullptr);
 
@@ -46,13 +46,13 @@ HANDLE GetParentProcess() {
     PROCESSENTRY32 processEntry = {};
     processEntry.dwSize = sizeof(PROCESSENTRY32);
 
-    if (Process32First(snapshot, &processEntry)) {
+    if(Process32First(snapshot, &processEntry)) {
         const DWORD currentProcessId = GetCurrentProcessId();
 
         do {
-            if (processEntry.th32ProcessID == currentProcessId)
+            if(processEntry.th32ProcessID == currentProcessId)
                 break;
-        } while (Process32Next(snapshot, &processEntry));
+        } while(Process32Next(snapshot, &processEntry));
     }
 
     CloseHandle(snapshot);
@@ -60,50 +60,50 @@ HANDLE GetParentProcess() {
     return OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, processEntry.th32ParentProcessID);
 }
 
-extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved) {
+extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
     //MessageBoxA(nullptr, "NetModAPI DEBUG", "NetModAPI", 0);
-    switch (ul_reason_for_call) {
-    case DLL_PROCESS_ATTACH: {
-
-        DWORD S4_Main = reinterpret_cast<DWORD>(GetModuleHandle(nullptr));
-        hlib::CallPatch patch = hlib::CallPatch(S4_Main + 0x5C489, reinterpret_cast<DWORD>(&WaitForPlugins));
-        patch.patch();
+    switch(ul_reason_for_call) {
+    case DLL_PROCESS_ATTACH:
+        {
+            DWORD           S4_Main = reinterpret_cast<DWORD>(GetModuleHandle(nullptr));
+            hlib::CallPatch patch = hlib::CallPatch(S4_Main + 0x5C489, reinterpret_cast<DWORD>(&WaitForPlugins));
+            patch.patch();
 
 #ifndef TEST
-        if (GetAsyncKeyState(VK_F2)) {
-            return TRUE;
-        }
+            if(GetAsyncKeyState(VK_F2)) {
+                return TRUE;
+            }
 
-        const HANDLE parent_handle = GetParentProcess();
-        wchar_t process_name[1024] = { 0 };
-        DWORD   process_name_size = 1024;
-        QueryFullProcessImageNameW(parent_handle, 0, process_name, &process_name_size);
-        const std::filesystem::path process_file_path(process_name);
+            const HANDLE parent_handle = GetParentProcess();
+            wchar_t      process_name[1024] = {0};
+            DWORD        process_name_size = 1024;
+            QueryFullProcessImageNameW(parent_handle, 0, process_name, &process_name_size);
+            const std::filesystem::path process_file_path(process_name);
 
-        const std::string parentName = process_file_path.filename().string();
+            const std::string parentName = process_file_path.filename().string();
 
-        // abort if we're not called from Ubisoft Launcher or Internal Call... (Prevents loading in first call)
-        if (_stricmp(parentName.c_str(), "UbisoftGameLauncher.exe") != 0 &&
-            _stricmp(parentName.c_str(), "UbisoftGameLauncher64.exe") != 0 &&
-            _stricmp(parentName.c_str(), "S4_Main.exe") != 0) {
-            return TRUE;
-        }
+            // abort if we're not called from Ubisoft Launcher or Internal Call... (Prevents loading in first call)
+            if(_stricmp(parentName.c_str(), "UbisoftGameLauncher.exe") != 0 &&
+                _stricmp(parentName.c_str(), "UbisoftGameLauncher64.exe") != 0 &&
+                _stricmp(parentName.c_str(), "S4_Main.exe") != 0) {
+                return TRUE;
+            }
 
 
 #ifndef PUBLIC
-        if (GetAsyncKeyState('Q')) {
-            MessageBoxA(nullptr, "NetModAPI DEBUG", "NetModAPI", 0);
-        }
+            if(GetAsyncKeyState('Q')) {
+                MessageBoxA(nullptr, "NetModAPI DEBUG", "NetModAPI", 0);
+            }
 
-        AllocConsole();
-        freopen("CONOUT$", "w", stdout);
-        freopen("CONOUT$", "w", stderr);
+            AllocConsole();
+            freopen("CONOUT$", "w", stdout);
+            freopen("CONOUT$", "w", stderr);
 #endif // !PUBLIC
 
-        if (!Init()) break;
+            if(!Init()) break;
 #endif
-        break;
-    }
+            break;
+        }
     case DLL_THREAD_ATTACH:
     case DLL_THREAD_DETACH:
     default:
@@ -111,7 +111,7 @@ extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPV
     case DLL_PROCESS_DETACH:
         CleanUp();
 #ifndef TEST
-        //ExitProcess(-1);
+    //ExitProcess(-1);
 #endif
         break;
     }

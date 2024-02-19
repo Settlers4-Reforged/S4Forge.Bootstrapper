@@ -29,4 +29,3 @@ namespace NetModAPI {
         static void LogError(String^ msg, Exception^ exception, [System::Runtime::InteropServices::Optional]String^ logger);
     };
 }
-

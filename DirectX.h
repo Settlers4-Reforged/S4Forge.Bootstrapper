@@ -6,7 +6,7 @@
     }
 
 inline RECT ToRECT(System::Numerics::Vector4 rect) {
-    return RECT{ static_cast<LONG>(rect.X), static_cast<LONG>(rect.Y), static_cast<LONG>(rect.Z), static_cast<LONG>(rect.W) };
+    return RECT{static_cast<LONG>(rect.X), static_cast<LONG>(rect.Y), static_cast<LONG>(rect.Z), static_cast<LONG>(rect.W)};
 }
 
 #include "Device.h"

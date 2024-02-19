@@ -16,7 +16,7 @@ LONG __stdcall UnhandledExceptionCallback(_EXCEPTION_POINTERS* exceptionInfo) {
     }
 #endif
 
-    if (wasCalled)
+    if(wasCalled)
         return EXCEPTION_CONTINUE_SEARCH;
 
     wasCalled = true;
@@ -36,7 +36,7 @@ LONG __stdcall UnhandledExceptionCallback(_EXCEPTION_POINTERS* exceptionInfo) {
 }
 
 std::wstring ExePath() {
-    TCHAR buffer[MAX_PATH] = { 0 };
+    TCHAR buffer[MAX_PATH] = {0};
     GetModuleFileName(NULL, buffer, MAX_PATH);
     std::wstring::size_type pos = std::wstring(buffer).find_last_of(L"\\/");
     return std::wstring(buffer).substr(0, pos);
@@ -50,7 +50,7 @@ bool CrashHandling::InstallCrashHandler() {
     const std::wstring uploadEndpoint = L"http://crash.settlers4-hd.com/crashfix/index.php/crashReport/uploadExternal";
 
     const HMODULE crashRpt = LoadLibrary((crashRptPath + L"CrashRpt1403.dll").c_str());
-    if (crashRpt != nullptr) {
+    if(crashRpt != nullptr) {
         // Define CrashRpt configuration parameters
         CR_INSTALL_INFO info{};
         info.cb = sizeof(CR_INSTALL_INFO);
@@ -75,7 +75,7 @@ bool CrashHandling::InstallCrashHandler() {
 
         // Install crash reporting
         const int nResult = crInstall(&info);
-        if (nResult != 0) {
+        if(nResult != 0) {
 #ifdef DEBUG
             // Something goes wrong. Get error message.
             TCHAR szErrorMsg[512] = L"";
@@ -97,14 +97,12 @@ bool CrashHandling::InstallCrashHandler() {
 #pragma managed
 using namespace System::Runtime::InteropServices;
 
-void CrashHandling::CrashReporter::ReportCrash(System::String^ message) {
-
-}
+void CrashHandling::CrashReporter::ReportCrash(System::String^ message) {}
 
 bool CrashHandling::CrashReporter::AddPropertyToCrashReport(System::String^ name, System::String^ value) {
     System::IntPtr psz_prop_name = Marshal::StringToHGlobalUni(name);
     System::IntPtr psz_prop_value = Marshal::StringToHGlobalUni(value);
-    if (const int result = crAddProperty(static_cast<wchar_t*>(psz_prop_name.ToPointer()), static_cast<wchar_t*>(psz_prop_value.ToPointer())); result != 0) {
+    if(const int result = crAddProperty(static_cast<wchar_t*>(psz_prop_name.ToPointer()), static_cast<wchar_t*>(psz_prop_value.ToPointer())); result != 0) {
         Marshal::FreeHGlobal(psz_prop_name);
         Marshal::FreeHGlobal(psz_prop_value);
         return false;
@@ -117,7 +115,7 @@ bool CrashHandling::CrashReporter::AddPropertyToCrashReport(System::String^ name
 
 bool CrashHandling::CrashReporter::AddFileToCrashReport(System::String^ file) {
     System::IntPtr psz_file = Marshal::StringToHGlobalUni(file);
-    if (const int result = crAddFile2(static_cast<wchar_t*>(psz_file.ToPointer()), nullptr, nullptr, CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK); result != 0) {
+    if(const int result = crAddFile2(static_cast<wchar_t*>(psz_file.ToPointer()), nullptr, nullptr, CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK); result != 0) {
         Marshal::FreeHGlobal(psz_file);
         return false;
     }

@@ -7,14 +7,13 @@
 // Make it shut up:
 #pragma warning(disable: 4691)
 
-
 using namespace System::Diagnostics;
 using namespace NLog;
 using namespace NLog::Targets;
 
 
 FileTarget^ NetModAPI::Logger::CreateFileLogger(String^ log_path, String^ log_suffix) {
-    FileTarget^ log_file = gcnew FileTarget("logfile"+log_suffix);
+    FileTarget^ log_file = gcnew FileTarget("logfile" + log_suffix);
     log_file->FileName = Layouts::Layout::FromString(log_path + "latest" + log_suffix + ".txt");
     log_file->ArchiveOldFileOnStartup = true;
     log_file->Footer = Layouts::Layout::FromString("End of log");
@@ -26,7 +25,6 @@ FileTarget^ NetModAPI::Logger::CreateFileLogger(String^ log_path, String^ log_su
 
     return log_file;
 }
-
 
 
 static NetModAPI::Logger::Logger() {
@@ -53,12 +51,12 @@ static NetModAPI::Logger::Logger() {
 }
 
 ILogger^ NetModAPI::Logger::GetLogger(String^ name) {
-    if (name == nullptr || !loggers->ContainsKey(name)) return log;
+    if(name == nullptr || !loggers->ContainsKey(name)) return log;
     return loggers[name];
 }
 
 ILogger^ NetModAPI::Logger::GetErrorLogger(String^ name) {
-    if (name == nullptr || !error_loggers->ContainsKey(name)) return error_log;
+    if(name == nullptr || !error_loggers->ContainsKey(name)) return error_log;
     return error_loggers[name];
 }
 
@@ -92,5 +90,6 @@ void NetModAPI::Logger::LogError(String^ msg, Exception^ exception, [System::Run
     GetErrorLogger(logger)->Error(exception, msg);
     Debugger::Break();
 }
+
 
 #pragma warning(pop)

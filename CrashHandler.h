@@ -15,5 +15,4 @@ namespace CrashHandling {
         virtual bool AddPropertyToCrashReport(System::String^ name, System::String^ value);
         virtual bool AddFileToCrashReport(System::String^ file);
     };
-
 }

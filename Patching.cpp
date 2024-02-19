@@ -3,91 +3,91 @@
 
 
 void NetModAPI::Patch::Apply() {
-	this->m_handle->patch();
+    this->m_handle->patch();
 }
 
 void NetModAPI::Patch::Revert() {
-	this->m_handle->unpatch();
+    this->m_handle->unpatch();
 }
 
 
 NetModAPI::Patch::Patch(hlib::AbstractPatch* handle) {
-	this->m_handle = handle;
+    this->m_handle = handle;
 }
 
-NetModAPI::Patch::Patch(int address, array<unsigned char> ^patch) {
-	const void* patchNative = System::Runtime::InteropServices::Marshal::UnsafeAddrOfPinnedArrayElement(patch, 0).ToPointer();
-	this->m_handle = new hlib::Patch(address, patchNative, patch->Length);
+NetModAPI::Patch::Patch(int address, array<unsigned char>^ patch) {
+    const void* patchNative = System::Runtime::InteropServices::Marshal::UnsafeAddrOfPinnedArrayElement(patch, 0).ToPointer();
+    this->m_handle = new hlib::Patch(address, patchNative, patch->Length);
 }
 
-NetModAPI::Patch::Patch(int address, array<unsigned char>^patch, array<unsigned char>^expectedOrigin){
-	const void* patchNative = System::Runtime::InteropServices::Marshal::UnsafeAddrOfPinnedArrayElement(patch, 0).ToPointer();
-	const void* expectedOriginNative = System::Runtime::InteropServices::Marshal::UnsafeAddrOfPinnedArrayElement(expectedOrigin, 0).ToPointer();
-	this->m_handle = new hlib::Patch(address, patchNative, expectedOriginNative, patch->Length);
+NetModAPI::Patch::Patch(int address, array<unsigned char>^ patch, array<unsigned char>^ expectedOrigin) {
+    const void* patchNative = System::Runtime::InteropServices::Marshal::UnsafeAddrOfPinnedArrayElement(patch, 0).ToPointer();
+    const void* expectedOriginNative = System::Runtime::InteropServices::Marshal::UnsafeAddrOfPinnedArrayElement(expectedOrigin, 0).ToPointer();
+    this->m_handle = new hlib::Patch(address, patchNative, expectedOriginNative, patch->Length);
 }
 
 NetModAPI::Patch::Patch(int address, System::Int32 patch) {
-	this->m_handle = new hlib::Patch(address, static_cast<DWORD>(patch));
+    this->m_handle = new hlib::Patch(address, static_cast<DWORD>(patch));
 }
 
 NetModAPI::Patch::Patch(int address, System::Int32 patch, System::Int32 expectedOrig) {
-	this->m_handle = new hlib::Patch(address, static_cast<DWORD>(patch), expectedOrig);
+    this->m_handle = new hlib::Patch(address, static_cast<DWORD>(patch), expectedOrig);
 }
 
 NetModAPI::Patch::Patch(int address, unsigned char patch) {
-	this->m_handle = new hlib::Patch(address, patch);
+    this->m_handle = new hlib::Patch(address, patch);
 }
 
 NetModAPI::Patch::Patch(int address, unsigned char patch, unsigned char expected) {
-	this->m_handle = new hlib::Patch(address, patch, expected);
+    this->m_handle = new hlib::Patch(address, patch, expected);
 }
 
 NetModAPI::JmpPatch::JmpPatch(System::IntPtr address, System::IntPtr jumpTargetAddress, int nops) : Patch(new hlib::JmpPatch(address.ToInt64(), jumpTargetAddress.ToInt64(), nops)) {}
 
 NetModAPI::JmpPatch::JmpPatch(System::IntPtr address, System::IntPtr jumpTargetAddress, array<unsigned char>^ expectedOrigin, int nops) {
-	if (expectedOrigin->Length > 4) throw gcnew System::ArgumentException("expectedOrigin cannot be longer than 4");
+    if(expectedOrigin->Length > 4) throw gcnew System::ArgumentException("expectedOrigin cannot be longer than 4");
 
-	if (expectedOrigin->Length < 4) {
-		array<unsigned char>^ tmp = gcnew array<unsigned char>(4);
-		expectedOrigin->CopyTo(tmp, 0);
-		expectedOrigin = tmp;
-	}
-	const hlib::Patch::BYTE5 expectedOriginNative{ expectedOrigin[0], expectedOrigin[1], expectedOrigin[2], expectedOrigin[3] };
+    if(expectedOrigin->Length < 4) {
+        array<unsigned char>^ tmp = gcnew array<unsigned char>(4);
+        expectedOrigin->CopyTo(tmp, 0);
+        expectedOrigin = tmp;
+    }
+    const hlib::Patch::BYTE5 expectedOriginNative{expectedOrigin[0], expectedOrigin[1], expectedOrigin[2], expectedOrigin[3]};
 
-	this->m_handle = new hlib::JmpPatch(address.ToInt64(), jumpTargetAddress.ToInt64(), &expectedOriginNative, nops);
+    this->m_handle = new hlib::JmpPatch(address.ToInt64(), jumpTargetAddress.ToInt64(), &expectedOriginNative, nops);
 }
 
 NetModAPI::CallPatch::CallPatch(System::IntPtr address, System::IntPtr callTargetAddress, int nops) {
-	this->m_handle = new hlib::CallPatch(address.ToInt64(), callTargetAddress.ToInt64(), nops);
+    this->m_handle = new hlib::CallPatch(address.ToInt64(), callTargetAddress.ToInt64(), nops);
 }
 
-NetModAPI::CallPatch::CallPatch(System::IntPtr address, System::IntPtr callTargetAddress, array<unsigned char>^expectedOrigin, int nops) {
-	if (expectedOrigin->Length > 4) throw gcnew System::ArgumentException("expectedOrigin cannot be longer than 4");
+NetModAPI::CallPatch::CallPatch(System::IntPtr address, System::IntPtr callTargetAddress, array<unsigned char>^ expectedOrigin, int nops) {
+    if(expectedOrigin->Length > 4) throw gcnew System::ArgumentException("expectedOrigin cannot be longer than 4");
 
-	if (expectedOrigin->Length < 4) {
-		array<unsigned char>^ tmp = gcnew array<unsigned char>(4);
-		expectedOrigin->CopyTo(tmp, 0);
-		expectedOrigin = tmp;
-	}
-	const hlib::Patch::BYTE5 expectedOriginNative{ expectedOrigin[0], expectedOrigin[1], expectedOrigin[2], expectedOrigin[3] };
+    if(expectedOrigin->Length < 4) {
+        array<unsigned char>^ tmp = gcnew array<unsigned char>(4);
+        expectedOrigin->CopyTo(tmp, 0);
+        expectedOrigin = tmp;
+    }
+    const hlib::Patch::BYTE5 expectedOriginNative{expectedOrigin[0], expectedOrigin[1], expectedOrigin[2], expectedOrigin[3]};
 
-	this->m_handle = new hlib::CallPatch(address.ToInt64(), callTargetAddress.ToInt64(), &expectedOriginNative, nops);
+    this->m_handle = new hlib::CallPatch(address.ToInt64(), callTargetAddress.ToInt64(), &expectedOriginNative, nops);
 }
 
 NetModAPI::NopPatch::NopPatch(System::IntPtr address, int nops) {
-	this->m_handle = new hlib::NopPatch(address.ToInt64(), nops);
+    this->m_handle = new hlib::NopPatch(address.ToInt64(), nops);
 }
 
-NetModAPI::NopPatch::NopPatch(System::IntPtr address, array<unsigned char>^expectedOrigin, int nops) {
-	if (expectedOrigin->Length > 4) throw gcnew System::ArgumentException("expectedOrigin cannot be longer than 4");
+NetModAPI::NopPatch::NopPatch(System::IntPtr address, array<unsigned char>^ expectedOrigin, int nops) {
+    if(expectedOrigin->Length > 4) throw gcnew System::ArgumentException("expectedOrigin cannot be longer than 4");
 
-	if (expectedOrigin->Length < 4) {
-		array<unsigned char>^ tmp = gcnew array<unsigned char>(4);
-		expectedOrigin->CopyTo(tmp, 0);
-		expectedOrigin = tmp;
-	}
+    if(expectedOrigin->Length < 4) {
+        array<unsigned char>^ tmp = gcnew array<unsigned char>(4);
+        expectedOrigin->CopyTo(tmp, 0);
+        expectedOrigin = tmp;
+    }
 
-	const hlib::Patch::BYTE5 expectedOriginNative{ expectedOrigin[0], expectedOrigin[1], expectedOrigin[2], expectedOrigin[3] };
+    const hlib::Patch::BYTE5 expectedOriginNative{expectedOrigin[0], expectedOrigin[1], expectedOrigin[2], expectedOrigin[3]};
 
-	this->m_handle = new hlib::NopPatch(address.ToInt64(), &expectedOriginNative, nops);
+    this->m_handle = new hlib::NopPatch(address.ToInt64(), &expectedOriginNative, nops);
 }
