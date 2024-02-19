@@ -13,6 +13,10 @@
 #include "S4ModApi.h"
 #include "globals.h"
 
+#include <string>
+
 #pragma managed(pop)
+
+#include "CrashHandler.h"
 
 #endif //PCH_H

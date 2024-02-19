@@ -11,7 +11,7 @@
     </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;h</Extensions>
     </Filter>
     <Filter Include="Source Files\Init">
       <UniqueIdentifier>{84e0f541-0904-4f6d-9ab4-28bce302529f}</UniqueIdentifier>
@@ -39,6 +39,12 @@
     </Filter>
     <Filter Include="Header Files\DirectX\DirectDraw">
       <UniqueIdentifier>{a0a36607-9b2f-4d0a-a3b6-1a081fe08285}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\CrashHandling">
+      <UniqueIdentifier>{d71d6654-fa1f-4f07-964e-820b8a27137d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\CrashHandling">
+      <UniqueIdentifier>{7baa4137-2d00-4fab-bc65-c7f1387912cc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -84,6 +90,9 @@
     <ClInclude Include="DirectX.h">
       <Filter>Header Files\DirectX</Filter>
     </ClInclude>
+    <ClInclude Include="CrashHandler.h">
+      <Filter>Header Files\CrashHandling</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -110,6 +119,9 @@
     <ClCompile Include="Patching.cpp">
       <Filter>Source Files\ModAPI</Filter>
     </ClCompile>
+    <ClCompile Include="CrashHandler.cpp">
+      <Filter>Source Files\CrashHandling</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">
@@ -123,8 +135,5 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="ijwdependency.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="lib\s4modapi\S4ModApi.dll" />
   </ItemGroup>
 </Project>

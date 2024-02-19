@@ -77,18 +77,24 @@
     <CopyCppRuntimeToOutputDir>true</CopyCppRuntimeToOutputDir>
     <CopyLocalProjectReference>true</CopyLocalProjectReference>
   </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions Condition="'$(AssemblyVersion)'!=''">FORGE_VERSION=$(AssemblyVersion);</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)lib\s4modapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib\s4modapi;$(ProjectDir)lib\crashrpt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;$(ProjectDir)lib\crashrpt\lib\CrashRpt1403.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EmbedManagedResourceFile>$(ProjectDir)lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
+      <DelayLoadDLLs>CrashRpt1403.dll</DelayLoadDLLs>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>ijwdependency.xml</AdditionalManifestFiles>
@@ -100,13 +106,13 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>TEST;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)lib\s4modapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib\s4modapi;$(ProjectDir)lib\crashrpt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;$(ProjectDir)lib\crashrpt\lib\CrashRpt1403.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EmbedManagedResourceFile>$(ProjectDir)lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
-      <DelayLoadDLLs>S4ModAPI.dll</DelayLoadDLLs>
+      <DelayLoadDLLs>S4ModAPI.dll;CrashRpt1403.dll</DelayLoadDLLs>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>ijwdependency.xml</AdditionalManifestFiles>
@@ -118,14 +124,15 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)lib\s4modapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib\s4modapi;$(ProjectDir)lib\crashrpt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;$(ProjectDir)lib\crashrpt\lib\CrashRpt1403.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalManifestDependencies>
       </AdditionalManifestDependencies>
       <EmbedManagedResourceFile>$(ProjectDir)lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
+      <DelayLoadDLLs>CrashRpt1403.dll</DelayLoadDLLs>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>ijwdependency.xml</AdditionalManifestFiles>
@@ -162,6 +169,7 @@
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
+    <ClInclude Include="CrashHandler.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="DirectX.h" />
     <ClInclude Include="globals.h" />
@@ -179,6 +187,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="CrashHandler.cpp" />
     <ClCompile Include="DllMain.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="ManagedLoader.cpp" />
@@ -204,12 +213,6 @@
       <Private>false</Private>
       <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="lib\s4modapi\S4ModApi.dll">
-      <DeploymentContent>true</DeploymentContent>
-      <FileType>Document</FileType>
-    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

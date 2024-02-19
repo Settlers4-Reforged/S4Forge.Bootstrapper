@@ -4,9 +4,9 @@
 
 #define FILE_VERSION 1, 0, 0
 #ifdef _DEBUG
-#define FILE_VERSION_STRING "VERSION 1.0.0 DEBUG"
+#define FILE_VERSION_STRING "DEBUG"
 #else
-#define FILE_VERSION_STRING "VERSION 1.0.0 RELEASE"
+#define FILE_VERSION_STRING "RELEASE"
 #endif
 // Next default values for new objects
 // 
