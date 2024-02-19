@@ -30,8 +30,6 @@ namespace NetModAPI {
 			s4->AddGuiBltListener(&CS4GUIBltCallback);
 			s4->AddGuiElementBltListener(&CS4GUIDrawCallback);
 			s4->AddGuiClearListener(&CS4GUIClearCallback);
-
-			oldWndProc = SetWindowLongPtr(s4->GetHwnd(), GWLP_WNDPROC, (LONG_PTR)HookedWndProcedure);
 		}
 
 		delegate HRESULT S4FrameCallback(LPDIRECTDRAWSURFACE7 lpSurface, INT32 iPillarboxWidth, LPVOID lpReserved);
@@ -98,6 +96,13 @@ namespace NetModAPI {
 
 		/** WndProc **/
 		S4HOOK  AddWndProc(S4WndProc^ clbk) {
+			if(oldWndProc == 0) {
+                HWND h_wnd = s4->GetHwnd();
+				if(h_wnd == nullptr)
+					MessageBox(nullptr, L"Failed to get window handle", L"NetModAPI", 0);
+				oldWndProc = SetWindowLongPtr(h_wnd, GWLP_WNDPROC, (LONG_PTR)HookedWndProcedure);
+            }
+
 			GCHandle::Alloc(clbk);
 			std::function<S4WNDPROC> fun = static_cast<WNDPROC>(Marshal::GetFunctionPointerForDelegate(clbk).ToPointer());
 			auto callback = CreateCallback<S4WNDPROC>(&fun);
