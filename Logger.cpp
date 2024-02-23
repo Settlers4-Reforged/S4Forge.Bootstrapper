@@ -14,7 +14,8 @@ using namespace NLog::Targets;
 
 FileTarget^ NetModAPI::Logger::CreateFileLogger(String^ log_path, String^ log_suffix) {
     FileTarget^ log_file = gcnew FileTarget("logfile" + log_suffix);
-    log_file->FileName = Layouts::Layout::FromString(log_path + "latest" + log_suffix + ".txt");
+    String^     file_path = log_path + "latest" + log_suffix + ".txt";
+    log_file->FileName = Layouts::Layout::FromString(file_path);
     log_file->ArchiveOldFileOnStartup = true;
     log_file->Footer = Layouts::Layout::FromString("End of log");
     log_file->ArchiveFileName = Layouts::Layout::FromString(log_path + "log" + log_suffix + ".{#}.txt");
@@ -22,6 +23,8 @@ FileTarget^ NetModAPI::Logger::CreateFileLogger(String^ log_path, String^ log_su
     log_file->MaxArchiveFiles = 5;
     log_file->CreateDirs = true;
     log_file->AutoFlush = true;
+
+    CrashHandling::CrashReporterService::GetCrashReporter()->AddFileToCrashReport(file_path);
 
     return log_file;
 }
