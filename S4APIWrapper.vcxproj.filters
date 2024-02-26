@@ -46,6 +46,12 @@
     <Filter Include="Source Files\CrashHandling">
       <UniqueIdentifier>{7baa4137-2d00-4fab-bc65-c7f1387912cc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\S4Hooks">
+      <UniqueIdentifier>{ed300020-438d-4348-92af-3da08bcb6b49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\S4Hooks">
+      <UniqueIdentifier>{068cc480-db2b-4b3c-b529-7b54ba4f818a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NetModAPI.h">
@@ -72,9 +78,6 @@
     <ClInclude Include="ManagedLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="S4Hooks.h">
-      <Filter>Header Files\ModAPI</Filter>
-    </ClInclude>
     <ClInclude Include="Logger.h">
       <Filter>Header Files\ModAPI\Logger</Filter>
     </ClInclude>
@@ -92,6 +95,12 @@
     </ClInclude>
     <ClInclude Include="CrashHandler.h">
       <Filter>Header Files\CrashHandling</Filter>
+    </ClInclude>
+    <ClInclude Include="S4Hooks.h">
+      <Filter>Header Files\S4Hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="S4APIHooks.h">
+      <Filter>Header Files\ModAPI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -121,6 +130,9 @@
     </ClCompile>
     <ClCompile Include="CrashHandler.cpp">
       <Filter>Source Files\CrashHandling</Filter>
+    </ClCompile>
+    <ClCompile Include="S4Hooks.cpp">
+      <Filter>Source Files\S4Hooks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

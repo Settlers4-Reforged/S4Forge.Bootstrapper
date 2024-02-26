@@ -1,5 +1,6 @@
 #pragma once
 
+#include "S4APIHooks.h"
 #include "S4Hooks.h"
 
 #pragma make_public(IDirectDrawSurface7)
@@ -30,6 +31,8 @@ namespace NetModAPI {
             s4->AddGuiBltListener(&CS4GUIBltCallback);
             s4->AddGuiElementBltListener(&CS4GUIDrawCallback);
             s4->AddGuiClearListener(&CS4GUIClearCallback);
+
+            S4Hook::LoadS4Hooks();
         }
 
         delegate HRESULT S4FrameCallback(LPDIRECTDRAWSURFACE7 lpSurface, INT32 iPillarboxWidth, LPVOID lpReserved);
@@ -110,6 +113,10 @@ namespace NetModAPI {
             return callback->id;
         }
 
+        /** Event Engine **/
+        byte PostToMessageQueue(void* eventEngine, void* event) { return S4Hook::PostToMessageQueue(eventEngine, event); }
+        void* CreateS4Event(void* _this, unsigned int a2, unsigned int a3, unsigned int a4, char a5) { return S4Hook::CreateS4Event(_this, a2, a3, a4, a5); }
+        void* CreateS4UIEvent(void* _this, unsigned int a2, unsigned int a3, unsigned int a4, char a5, unsigned int a6, __int16 a7) { return S4Hook::CreateS4UIEvent(_this, a2, a3, a4, a5, a6, a7); }
 
 
         /** ISettlers4Api methods **/
