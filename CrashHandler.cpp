@@ -56,13 +56,14 @@ LONG __stdcall ForgeExceptionHandler(PEXCEPTION_POINTERS exception_pointers) {
 #endif
 
     if (isManagedException) {
+        if (!g_clr_crash_handler) {
 #if DEBUG
-        if(!g_clr_crash_handler) // This should never happen, but if it does, we should report it to the developer.
+            // This should never happen, but if it does, we should report it.
             MessageBoxW(nullptr, L"CLR Exception Handler not set, but received a managed exception", L"Forge - Error", 0);
-#else
-        if (!g_clr_crash_handler) // If the CLR crash handler is not set, we should not handle the exception with the clr.
-            goto skip_clr_crash_handler;
 #endif
+            // If the CLR crash handler is not set, we should not handle the exception with the clr.
+            goto skip_clr_crash_handler;
+        }
 
         if (g_clr_crash_handler(exception_pointers) == EXCEPTION_CONTINUE_EXECUTION || g_exception_handled_by_clr)
             return EXCEPTION_CONTINUE_EXECUTION;
@@ -84,16 +85,70 @@ LONG __stdcall ForgeExceptionHandler(PEXCEPTION_POINTERS exception_pointers) {
     return EXCEPTION_CONTINUE_SEARCH;
 }
 
+void GuardedGameTick() {
+    DWORD S4_Main = reinterpret_cast<DWORD>(GetModuleHandle(nullptr));
+    DWORD retpos = S4_Main + 0x5cba9;
 
+    __try {
+        __asm {
+            jmp retpos
+        }
+    } __except (ForgeExceptionHandler(GetExceptionInformation())) { }
+}
+
+
+void _declspec(naked) _GuardedGameTick() {
+    __asm {
+        // Previous call at this position...
+        call ShowWindow
+    }
+
+    // Separate function to allow for the __try SEH block
+    GuardedGameTick();
+}
+
+LONG __stdcall CorruptedStateExceptionHandler(PEXCEPTION_POINTERS exception_pointers) {
+    DWORD dwExceptionCode = exception_pointers->ExceptionRecord->ExceptionCode;
+
+    switch (dwExceptionCode) {
+    case STATUS_ACCESS_VIOLATION:
+    case STATUS_STACK_OVERFLOW:
+    case EXCEPTION_ILLEGAL_INSTRUCTION:
+    case EXCEPTION_IN_PAGE_ERROR:
+    case EXCEPTION_INVALID_DISPOSITION:
+    case EXCEPTION_NONCONTINUABLE_EXCEPTION:
+    case EXCEPTION_PRIV_INSTRUCTION:
+    case STATUS_UNWIND_CONSOLIDATE:
+#ifdef DEBUG
+        MessageBox(nullptr, L"Encountered a corrupted state exception", L"Forge - Error", 0);
+#endif
+        // Forward to the forge handler
+        return ForgeExceptionHandler(exception_pointers);
+        // TODO: maybe check if stuck in a loop and exit the process
+    default:
+        return EXCEPTION_CONTINUE_SEARCH;
+    }
+}
 
 std::wstring ExePath() {
-    TCHAR buffer[MAX_PATH] = {0};
-    GetModuleFileName(NULL, buffer, MAX_PATH);
+    TCHAR buffer[MAX_PATH] = { 0 };
+    GetModuleFileName(nullptr, buffer, MAX_PATH);
     std::wstring::size_type pos = std::wstring(buffer).find_last_of(L"\\/");
     return std::wstring(buffer).substr(0, pos);
 }
 
 bool CrashHandling::InstallCrashHandler() {
+    // Patch the game loop to catch any straggling exceptions
+    DWORD S4_Main = reinterpret_cast<DWORD>(GetModuleHandle(nullptr));
+    hlib::JmpPatch patch = hlib::JmpPatch(S4_Main + 0x5cba3, reinterpret_cast<DWORD>(&_GuardedGameTick));
+    patch.patch();
+
+    // This is a workaround for the CLR crash handler in P/Invoke scenarios, which *will* skip the windows SEH Handler.
+    // It is only intended to catch corrupted state exceptions, which are not caught by the CLR crash handler.
+    // Any other exceptions should be handled by the default SEH flow.
+    // THIS GETS CALLED FOR EVERY EXCEPTION - HANDLE WITH CARE
+    AddVectoredExceptionHandler(1, CorruptedStateExceptionHandler);
+
     const std::wstring crashRptPath = ExePath() + L"\\plugins\\Forge\\CrashRpt\\";
     const std::wstring libPath = crashRptPath;
     const std::wstring langFile = libPath + L"\\crashrpt_lang.ini";
