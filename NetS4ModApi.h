@@ -118,6 +118,17 @@ namespace NetModAPI {
         void* CreateS4Event(void* _this, unsigned int a2, unsigned int a3, unsigned int a4, char a5) { return S4Hook::CreateS4Event(_this, a2, a3, a4, a5); }
         void* CreateS4UIEvent(void* _this, unsigned int a2, unsigned int a3, unsigned int a4, char a5, unsigned int a6, __int16 a7) { return S4Hook::CreateS4UIEvent(_this, a2, a3, a4, a5, a6, a7); }
 
+        /** Sound **/
+        void PlaySound(int id) { S4Hook::PlaySound(id); }
+        int GetMusicVolume() { return S4Hook::GetMusicVolume();}
+        void SetMusicVolume(int volume) { S4Hook::SetMusicVolume(volume); }
+        int GetMusicEnabled() { return S4Hook::GetMusicEnabled(); }
+        void ToggleMusic(bool enabled) { S4Hook::ToggleMusic(enabled); }
+
+        int GetSoundVolume() { return S4Hook::GetSoundVolume(); }
+        void SetSoundVolume(int volume) { S4Hook::SetSoundVolume(volume); }
+        int GetSoundEnabled() { return S4Hook::GetSoundEnabled(); }
+        void ToggleSound(bool enabled) { S4Hook::ToggleSound(enabled); }
 
         /** ISettlers4Api methods **/
         LPVOID  GetDebugData(LPVOID a, LPVOID b) { return s4->GetDebugData(a, b); }

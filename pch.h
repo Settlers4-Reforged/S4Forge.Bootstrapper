@@ -11,6 +11,7 @@
 // add headers that you want to pre-compile here
 
 #include "S4ModApi.h"
+#undef PlaySound
 #include "globals.h"
 
 #include <string>
