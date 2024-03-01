@@ -64,17 +64,23 @@ ILogger^ NetModAPI::Logger::GetErrorLogger(String^ name) {
 }
 
 void NetModAPI::Logger::AddLogger(String^ name) {
-    auto logger = CreateFileLogger(log_path, "@" + name);
-    config->AddRule(LogLevel::Debug, LogLevel::Fatal, logger, name);
+    auto log_target = CreateFileLogger(log_path, "@" + name);
+    config->AddRule(LogLevel::Debug, LogLevel::Fatal, log_target, name);
 
-    auto error_logger = CreateFileLogger(log_path, "@" + name + "-error");
-    config->AddRule(LogLevel::Debug, LogLevel::Fatal, error_logger, name + "-error");
+    auto error_target = CreateFileLogger(log_path, "@" + name + "-error");
+    config->AddRule(LogLevel::Debug, LogLevel::Fatal, error_target, name + "-error");
 
     // Apply config
     LogManager::Configuration = config;
 
-    loggers->Add(name, LogManager::GetLogger(name));
-    error_loggers->Add(name, LogManager::GetLogger(name + "-error"));
+    NLog::Logger^ log = LogManager::GetLogger(name);
+    NLog::Logger^ error_log = LogManager::GetLogger(name + "-error");
+
+    log->Info("Started logging");
+    error_log->Info("Started Error logging");
+
+    loggers->Add(name, log);
+    error_loggers->Add(name, error_log);
 }
 
 void NetModAPI::Logger::LogInfo(String^ msg, [System::Runtime::InteropServices::Optional]String^ logger) {
