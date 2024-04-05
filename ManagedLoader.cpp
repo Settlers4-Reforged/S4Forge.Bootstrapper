@@ -13,8 +13,8 @@ Assembly^ AssemblyLoader(Object^ sender, ResolveEventArgs^ args) {
     try {
         auto loadedAssemblies = System::AppDomain::CurrentDomain->GetAssemblies();
 
-        for each(Assembly^ a in loadedAssemblies) {
-            if(a->FullName == args->Name)
+        for each (Assembly ^ a in loadedAssemblies) {
+            if (a->FullName == args->Name)
                 return a;
         }
 
@@ -22,14 +22,14 @@ Assembly^ AssemblyLoader(Object^ sender, ResolveEventArgs^ args) {
 
         String^ resource = nullptr;
         auto    embeddedAssemblies = (NetModAPI::IForge::typeid)->Assembly->GetManifestResourceNames();
-        for each(String^ a in embeddedAssemblies) {
-            if(a->EndsWith(resourceName)) {
+        for each (String ^ a in embeddedAssemblies) {
+            if (a->EndsWith(resourceName)) {
                 resource = a;
                 break;
             }
         }
 
-        if(resource != nullptr) {
+        if (resource != nullptr) {
             auto stream = Assembly::GetExecutingAssembly()->GetManifestResourceStream(resource);
 
             array<Byte>^ assemblyData = gcnew array<Byte>(safe_cast<int>(stream->Length));
@@ -38,38 +38,34 @@ Assembly^ AssemblyLoader(Object^ sender, ResolveEventArgs^ args) {
             return Assembly::Load(assemblyData);
         }
 
-        if(args->RequestingAssembly == nullptr) return nullptr;
+        if (args->RequestingAssembly == nullptr) return nullptr;
 
         String^ folderPath = Path::GetDirectoryName(args->RequestingAssembly->Location);
-        if(folderPath == nullptr)
+        if (folderPath == nullptr)
             folderPath = "";
         String^ rawAssemblyPath = Path::Combine(folderPath, (gcnew AssemblyName(args->Name))->Name);
 
         String^ assemblyPath = rawAssemblyPath + ".dll";
 
-        if(!File::Exists(assemblyPath)) {
+        if (!File::Exists(assemblyPath)) {
             assemblyPath = rawAssemblyPath + ".asi";
-            if(!File::Exists(assemblyPath)) return nullptr;
+            if (!File::Exists(assemblyPath)) return nullptr;
         }
 
         auto assembly = Assembly::LoadFrom(assemblyPath);
         return assembly;
-    } catch(Exception^ e) {
+    } catch (Exception^ e) {
         Diagnostics::Debugger::Break();
         throw e;
     }
 }
 
 DWORD __stdcall InitPlugins(void* param) {
-    __try {
-        AppDomain::CurrentDomain->AppendPrivatePath("plugins\\");
+    AppDomain::CurrentDomain->AppendPrivatePath("plugins\\");
 
-        AppDomain^ currentDomain = AppDomain::CurrentDomain;
-        currentDomain->AssemblyResolve += gcnew ResolveEventHandler(&AssemblyLoader);
+    AppDomain^ currentDomain = AppDomain::CurrentDomain;
+    currentDomain->AssemblyResolve += gcnew ResolveEventHandler(&AssemblyLoader);
 
-        NetModAPI::NetModAPI::LoadForge();
-    } __except(EXCEPTION_EXECUTE_HANDLER) {
-        MessageBoxA(nullptr, "NetModAPI: Exception in InitPlugins", "NetModAPI", 0);
-    }
+    NetModAPI::NetModAPI::LoadForge();
     return 0;
 }
