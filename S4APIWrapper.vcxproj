@@ -217,6 +217,7 @@
     </Reference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Import Project="lib/minhook_v143.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>
