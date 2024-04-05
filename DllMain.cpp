@@ -18,18 +18,16 @@ static void CleanUp() {
     }
 };
 
-HANDLE forge_init_thread_handle = nullptr;
+bool ubisoft_ready = false;
 
-
-static char WaitForPlugins() {
-    if (forge_init_thread_handle != nullptr) {
-        WaitForSingleObject(forge_init_thread_handle, INFINITE);
-        forge_init_thread_handle = nullptr;
-    } else {
-        MessageBoxA(nullptr, "NetModAPI - Error", "NetModAPI - Error", MB_OK);
+extern "C" __declspec(dllexport) void InitAsi() {
+    if (!ubisoft_ready) {
+        return;
     }
 
-    return 1;
+    __try {
+        InitPlugins(nullptr);
+    } __except (CrashHandling::ForgeExceptionHandler(GetExceptionInformation())) {}
 }
 
 static bool Init() {
@@ -37,8 +35,6 @@ static bool Init() {
 
     ModAPI = S4ApiCreate(); // get an interface to the mod api
     if (ModAPI == nullptr) return false;
-
-    forge_init_thread_handle = CreateThread(nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(&InitPlugins), nullptr, 0, nullptr);
 
     return true;
 }
@@ -70,9 +66,6 @@ extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVO
 #ifndef TEST
         DWORD S4_Main = reinterpret_cast<DWORD>(GetModuleHandle(nullptr));
 
-        hlib::CallPatch patch = hlib::CallPatch(S4_Main + 0x5C489, reinterpret_cast<DWORD>(&WaitForPlugins));
-        patch.patch();
-
         hlib::NopPatch s4_exception_handler = hlib::NopPatch(S4_Main + 0x5C855, 5);
         s4_exception_handler.patch();
         s4_exception_handler = hlib::NopPatch(S4_Main + 0x951EF6, 5);
@@ -97,9 +90,11 @@ extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVO
         if (_stricmp(parent_name.c_str(), "UbisoftGameLauncher.exe") != 0 &&
             _stricmp(parent_name.c_str(), "UbisoftGameLauncher64.exe") != 0 &&
             _stricmp(parent_name.c_str(), "S4_Main.exe") != 0) {
+            ubisoft_ready = false;
             return TRUE;
         }
 
+        ubisoft_ready = true;
 
 #ifndef PUBLIC
         if (GetAsyncKeyState('Q')) {
