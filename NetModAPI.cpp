@@ -54,7 +54,7 @@ bool NetModAPI::NetModAPI::LoadForge() {
             e = e->InnerException;
         }
 
-        String^ errorMsg = String::Format("Error during load of Forge \nError: {1}\n\n============= Stack Trace =============\n{2}", e->Message, stackTrace);
+        String^ errorMsg = String::Format("Error during load of Forge \nError: {0}\n\n============= Stack Trace =============\n{1}", e->Message, stackTrace);
         Logger::LogError(errorMsg, e, nullptr);
     }
     return true;
