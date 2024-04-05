@@ -24,7 +24,7 @@ FileTarget^ NetModAPI::Logger::CreateFileLogger(String^ log_path, String^ log_su
     log_file->CreateDirs = true;
     log_file->AutoFlush = true;
 
-    CrashHandling::CrashReporterService::GetCrashReporter()->AddFileToCrashReport(file_path);
+    CrashHandling::DebugService::GetReporter()->AddFileToReport(file_path);
 
     return log_file;
 }

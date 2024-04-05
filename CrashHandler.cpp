@@ -2,7 +2,9 @@
 #pragma unmanaged
 
 #include "crashrpt.h"
+#include "Logger.h"
 
+#include "MinHook.h"
 
 LPTOP_LEVEL_EXCEPTION_FILTER g_clr_crash_handler;
 
@@ -11,9 +13,10 @@ PEXCEPTION_POINTERS g_last_exception_pointers;
 // This is a workaround for the CLR crash handler, which can skip the default forge crash handler.
 bool g_exception_handled_by_clr = false;
 
-LONG __stdcall ForgeExceptionHandler(PEXCEPTION_POINTERS exception_pointers) {
+LONG __stdcall CrashHandling::ForgeExceptionHandler(PEXCEPTION_POINTERS exception_pointers) {
     if (g_last_exception_pointers != nullptr) {
         // This indicates, that something went wrong and the crash handler was called twice, probably due to a problem in the crl crash handler.
+        MessageBoxW(nullptr, L"Crash handler was called twice", L"Forge - Error", 0);
         goto skip_clr_crash_handler;
     }
 
@@ -33,7 +36,7 @@ LONG __stdcall ForgeExceptionHandler(PEXCEPTION_POINTERS exception_pointers) {
             isManagedException = true;
 
             crAddProperty(L"Managed", L"True");
-        }else {
+        } else {
             crAddProperty(L"Managed", L"False");
         }
     }
@@ -41,12 +44,12 @@ LONG __stdcall ForgeExceptionHandler(PEXCEPTION_POINTERS exception_pointers) {
 
 #if DEBUG
     {
-        std::string message = "Exception not caught.\n\nAttach debugger and press retry to debug, or press cancel to stop execution. Press ignore to invoke the default error handler";
+        const wchar_t *message = L"Exception not caught.\n\nAttach debugger and press retry to debug, or press cancel to stop execution. Press ignore to invoke the default error handler";
         if (isManagedException) {
-            message = "Managed " + message;
+            message = L"Managed Exception not caught.\n\nAttach debugger and press retry to debug, or press cancel to stop execution. Press ignore to invoke the default error handler";
         }
 
-        const int choice = MessageBoxA(nullptr, message.c_str(), "Forge -  Error", MB_ABORTRETRYIGNORE);
+        const int choice = MessageBox(nullptr, message, L"Forge -  Error", MB_ABORTRETRYIGNORE);
         if (choice == IDRETRY) {
             return EXCEPTION_CONTINUE_SEARCH;
         } else if (choice == IDABORT) {
@@ -69,7 +72,7 @@ LONG __stdcall ForgeExceptionHandler(PEXCEPTION_POINTERS exception_pointers) {
             return EXCEPTION_CONTINUE_EXECUTION;
     }
 
-    skip_clr_crash_handler:
+skip_clr_crash_handler:
 
     // TODO: check whether the exception is a pure S4 exception
 
@@ -93,7 +96,7 @@ void GuardedGameTick() {
         __asm {
             jmp retpos
         }
-    } __except (ForgeExceptionHandler(GetExceptionInformation())) { }
+    } __except (CrashHandling::ForgeExceptionHandler(GetExceptionInformation())) {}
 }
 
 
@@ -113,17 +116,11 @@ LONG __stdcall CorruptedStateExceptionHandler(PEXCEPTION_POINTERS exception_poin
     switch (dwExceptionCode) {
     case STATUS_ACCESS_VIOLATION:
     case STATUS_STACK_OVERFLOW:
-    case EXCEPTION_ILLEGAL_INSTRUCTION:
-    case EXCEPTION_IN_PAGE_ERROR:
-    case EXCEPTION_INVALID_DISPOSITION:
-    case EXCEPTION_NONCONTINUABLE_EXCEPTION:
-    case EXCEPTION_PRIV_INSTRUCTION:
-    case STATUS_UNWIND_CONSOLIDATE:
 #ifdef DEBUG
         MessageBox(nullptr, L"Encountered a corrupted state exception", L"Forge - Error", 0);
 #endif
         // Forward to the forge handler
-        return ForgeExceptionHandler(exception_pointers);
+        return CrashHandling::ForgeExceptionHandler(exception_pointers);
         // TODO: maybe check if stuck in a loop and exit the process
     default:
         return EXCEPTION_CONTINUE_SEARCH;
@@ -137,6 +134,10 @@ std::wstring ExePath() {
     return std::wstring(buffer).substr(0, pos);
 }
 
+LPTOP_LEVEL_EXCEPTION_FILTER WINAPI SetUnhandledExceptionFilterDetour(_In_opt_ LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter) {
+    return CrashHandling::ForgeExceptionHandler;
+}
+
 bool CrashHandling::InstallCrashHandler() {
     // Patch the game loop to catch any straggling exceptions
     DWORD S4_Main = reinterpret_cast<DWORD>(GetModuleHandle(nullptr));
@@ -147,7 +148,8 @@ bool CrashHandling::InstallCrashHandler() {
     // It is only intended to catch corrupted state exceptions, which are not caught by the CLR crash handler.
     // Any other exceptions should be handled by the default SEH flow.
     // THIS GETS CALLED FOR EVERY EXCEPTION - HANDLE WITH CARE
-    AddVectoredExceptionHandler(1, CorruptedStateExceptionHandler);
+    // NOTE: this is for now disabled, as it catches a few too many exceptions
+    //AddVectoredExceptionHandler(1, CorruptedStateExceptionHandler);
 
     const std::wstring crashRptPath = ExePath() + L"\\plugins\\Forge\\CrashRpt\\";
     const std::wstring libPath = crashRptPath;
@@ -156,7 +158,7 @@ bool CrashHandling::InstallCrashHandler() {
     const std::wstring uploadEndpoint = L"http://crash.settlers4-hd.com/crashfix/index.php/crashReport/uploadExternal";
 
     const HMODULE crashRpt = LoadLibrary((crashRptPath + L"CrashRpt1403.dll").c_str());
-    if(crashRpt != nullptr) {
+    if (crashRpt != nullptr) {
         // Define CrashRpt configuration parameters
         CR_INSTALL_INFO info{};
         info.cb = sizeof(CR_INSTALL_INFO);
@@ -182,7 +184,7 @@ bool CrashHandling::InstallCrashHandler() {
 
         // Install crash reporting
         const int nResult = crInstall(&info);
-        if(nResult != 0) {
+        if (nResult != 0) {
 #ifdef DEBUG
             // Something goes wrong. Get error message.
             TCHAR szErrorMsg[512] = L"";
@@ -193,6 +195,12 @@ bool CrashHandling::InstallCrashHandler() {
         }
 
         g_clr_crash_handler = SetUnhandledExceptionFilter(ForgeExceptionHandler);
+#define CHECK_MH(status) if(status != MH_OK) { MessageBoxA(nullptr, "Failed to initialize MinHook", "S4 HD-Patch Error", MB_OK); return false; }
+
+        CHECK_MH(MH_Initialize());
+        void* target = nullptr;
+        CHECK_MH(MH_CreateHookApiEx(L"kernel32.dll", "SetUnhandledExceptionFilter", &SetUnhandledExceptionFilterDetour, nullptr, &target));
+        CHECK_MH(MH_EnableHook(target));
     } else {
         MessageBoxW(nullptr, L"Failed to load CrashRpt", L"Forge - CrashRpt", 0);
         return false;
@@ -203,19 +211,39 @@ bool CrashHandling::InstallCrashHandler() {
 
 #pragma managed
 using namespace System::Runtime::InteropServices;
+using namespace System;
 
-void CrashHandling::CrashReporter::ReportCrash(CrashReportSource source, System::String^ message) {
+#define CR_GENERIC_REPORT_CODE 0x8001;
+#define CR_PROPERTY_REPORT_TYPE "ReportType"
+
+
+void CrashHandling::CrashRptDebugReporter::SendReport(DebugReportSource source, String^ message, CR_EXCEPTION_INFO exception_info) {
+    IntPtr^ psz_app_name = % Marshal::StringToHGlobalUni(source.application);
+    IntPtr^ psz_app_version = % Marshal::StringToHGlobalUni(source.version);
+    IntPtr^ psz_privacy_policy_url = % Marshal::StringToHGlobalUni(source.privacyPolicyUrl);
+    IntPtr^ psz_lang_file_path = % Marshal::StringToHGlobalUni(source.langFilePath);
+    IntPtr^ psz_target_url = % Marshal::StringToHGlobalUni(source.targetUrl);
+
+
+    //TODO: Modify CrashRpt to allow custom app name and version after installation
+    AddPropertyToReport("Message", message);
+    __try {
+        crGenerateErrorReport(&exception_info);
+    } __finally {
+        Marshal::FreeHGlobal(*psz_app_name);
+        Marshal::FreeHGlobal(*psz_app_version);
+        Marshal::FreeHGlobal(*psz_privacy_policy_url);
+        Marshal::FreeHGlobal(*psz_lang_file_path);
+        Marshal::FreeHGlobal(*psz_target_url);
+    }
+}
+
+void CrashHandling::CrashRptDebugReporter::ReportCrash(DebugReportSource source, String^ message) {
     g_exception_handled_by_clr = true;
-
-    System::IntPtr ^psz_app_name = %Marshal::StringToHGlobalUni(source.application);
-    System::IntPtr ^psz_app_version = %Marshal::StringToHGlobalUni(source.version);
-    System::IntPtr ^psz_privacy_policy_url = %Marshal::StringToHGlobalUni(source.privacyPolicyUrl);
-    System::IntPtr ^psz_lang_file_path = %Marshal::StringToHGlobalUni(source.langFilePath);
-    System::IntPtr ^psz_target_url = %Marshal::StringToHGlobalUni(source.targetUrl);
 
     const PEXCEPTION_POINTERS exception_pointers = g_last_exception_pointers;
     if (exception_pointers == nullptr) {
-        throw gcnew System::InvalidOperationException("This function can only be called in the context of a crash handler! No previous exception was recorded...");
+        throw gcnew InvalidOperationException("This function can only be called in the context of a crash handler! No previous exception was recorded...");
     }
 
     CR_EXCEPTION_INFO ei{};
@@ -224,23 +252,32 @@ void CrashHandling::CrashReporter::ReportCrash(CrashReportSource source, System:
     ei.code = exception_pointers->ExceptionRecord->ExceptionCode;
     ei.pexcptrs = exception_pointers;
 
-    //TODO: Modify CrashRpt to allow custom app name and version after installation
+    AddPropertyToReport(CR_PROPERTY_REPORT_TYPE, "Crash");
 
-    AddPropertyToCrashReport("Message", message);
-
-    crGenerateErrorReport(&ei);
-
-    Marshal::FreeHGlobal(*psz_app_name);
-    Marshal::FreeHGlobal(*psz_app_version);
-    Marshal::FreeHGlobal(*psz_privacy_policy_url);
-    Marshal::FreeHGlobal(*psz_lang_file_path);
-    Marshal::FreeHGlobal(*psz_target_url);
+    SendReport(source, message, ei);
 }
 
-bool CrashHandling::CrashReporter::AddPropertyToCrashReport(System::String^ name, System::String^ value) {
-    System::IntPtr ^psz_prop_name = %Marshal::StringToHGlobalUni(name);
-    System::IntPtr ^psz_prop_value = %Marshal::StringToHGlobalUni(value);
-    if(const int result = crAddProperty(static_cast<wchar_t*>(psz_prop_name->ToPointer()), static_cast<wchar_t*>(psz_prop_value->ToPointer())); result != 0) {
+void CrashHandling::CrashRptDebugReporter::ReportGeneric(DebugReportSource source, String^ message) {
+    CR_EXCEPTION_INFO ei{};
+    ei.cb = sizeof(CR_EXCEPTION_INFO);
+    ei.exctype = CR_SEH_EXCEPTION;
+    ei.code = CR_GENERIC_REPORT_CODE;
+    ei.pexcptrs = nullptr;
+    ei.bManual = TRUE;
+
+    AddPropertyToReport(CR_PROPERTY_REPORT_TYPE, "Generic");
+
+    NetModAPI::Logger::LogWarn("A generic report was requested - creating now...", "Generic");
+
+    SendReport(source, message, ei);
+
+    NetModAPI::Logger::LogInfo("Generic report was sent", "Generic");
+}
+
+bool CrashHandling::CrashRptDebugReporter::AddPropertyToReport(String^ name, String^ value) {
+    IntPtr^ psz_prop_name = % Marshal::StringToHGlobalUni(name);
+    IntPtr^ psz_prop_value = % Marshal::StringToHGlobalUni(value);
+    if (const int result = crAddProperty(static_cast<wchar_t*>(psz_prop_name->ToPointer()), static_cast<wchar_t*>(psz_prop_value->ToPointer())); result != 0) {
         Marshal::FreeHGlobal(*psz_prop_name);
         Marshal::FreeHGlobal(*psz_prop_value);
         return false;
@@ -251,13 +288,18 @@ bool CrashHandling::CrashReporter::AddPropertyToCrashReport(System::String^ name
     return true;
 }
 
-bool CrashHandling::CrashReporter::AddFileToCrashReport(System::String^ file) {
-    System::IntPtr ^psz_file = %Marshal::StringToHGlobalUni(file);
-    if(const int result = crAddFile2(static_cast<wchar_t*>(psz_file->ToPointer()), nullptr, nullptr, CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK); result != 0) {
+bool CrashHandling::CrashRptDebugReporter::AddFileToReport(String^ file) {
+    IntPtr^ psz_file = % Marshal::StringToHGlobalUni(file);
+    if (const int result = crAddFile2(static_cast<wchar_t*>(psz_file->ToPointer()), nullptr, nullptr, CR_AF_MAKE_FILE_COPY | CR_AF_MISSING_FILE_OK); result != 0) {
         Marshal::FreeHGlobal(*psz_file);
         return false;
     }
 
     Marshal::FreeHGlobal(*psz_file);
     return true;
+}
+
+
+bool CrashHandling::CrashRptDebugReporter::AddScreenshotToReport(HWND hwnd) {
+    return crAddScreenshot2(CR_AS_PROCESS_WINDOWS | CR_AS_ALLOW_DELETE, 100);
 }

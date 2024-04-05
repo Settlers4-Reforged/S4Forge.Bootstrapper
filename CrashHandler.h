@@ -1,10 +1,13 @@
 #pragma once
+#include <crashrpt.h>
 
 namespace CrashHandling {
+    LONG __stdcall ForgeExceptionHandler(PEXCEPTION_POINTERS exception_pointers);
+
     bool InstallCrashHandler();
 
 
-    value struct CrashReportSource {
+    value struct DebugReportSource {
         // The source name (often your plugin name), as in the project registered with CrashRpt
         System::String^ application;
         // The current source version
@@ -19,27 +22,33 @@ namespace CrashHandling {
         System::String^ langFilePath;
     };
 
-    interface class ICrashReporter {
-        void ReportCrash(CrashReportSource source, System::String^ message);
-        bool AddPropertyToCrashReport(System::String^ name, System::String^ value);
-        bool AddFileToCrashReport(System::String^ file);
+    interface class IDebugReporter {
+        void ReportCrash(DebugReportSource source, System::String^ message);
+        void ReportGeneric(DebugReportSource source, System::String^ message);
+        bool AddPropertyToReport(System::String^ name, System::String^ value);
+        bool AddFileToReport(System::String^ file);
+        bool AddScreenshotToReport(HWND hwnd);
     };
 
-    ref class CrashReporter : ICrashReporter {
+    ref class CrashRptDebugReporter : IDebugReporter {
     public:
-        virtual void ReportCrash(CrashReportSource source, System::String^ message);
-        virtual bool AddPropertyToCrashReport(System::String^ name, System::String^ value);
-        virtual bool AddFileToCrashReport(System::String^ file);
-    };
-
-
-    ref class CrashReporterService abstract sealed {
+        virtual void ReportCrash(DebugReportSource source, System::String^ message);
+        virtual void ReportGeneric(DebugReportSource source, System::String^ message);
+        virtual bool AddPropertyToReport(System::String^ name, System::String^ value);
+        virtual bool AddFileToReport(System::String^ file);
+        virtual bool AddScreenshotToReport(HWND hwnd);
     private:
-        static ICrashReporter^ instance;
+        void SendReport(DebugReportSource source, System::String^ message, CR_EXCEPTION_INFO exception_info);
+    };
+
+
+    public ref class DebugService abstract sealed {
+    private:
+        static IDebugReporter^ instance;
     public:
-        static ICrashReporter^ GetCrashReporter() {
+        static IDebugReporter^ GetReporter() {
             if (instance == nullptr)
-                instance = gcnew CrashReporter();
+                instance = gcnew CrashRptDebugReporter();
 
             return instance;
         }
