@@ -23,4 +23,4 @@ using namespace System::Security::Permissions;
 // Limits visibility of mostly everything to Forge for now
 // This Wrapper should only really ever be used by Forge
 // Especially because Forge wraps the full functionality (hopefully...)
-[assembly:InternalsVisibleToAttribute("S4Forge")] ;
+[assembly:InternalsVisibleToAttribute("S4Forge")];

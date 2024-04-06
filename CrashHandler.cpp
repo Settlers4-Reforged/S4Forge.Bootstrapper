@@ -300,6 +300,6 @@ bool CrashHandling::CrashRptDebugReporter::AddFileToReport(String^ file) {
 }
 
 
-bool CrashHandling::CrashRptDebugReporter::AddScreenshotToReport(HWND hwnd) {
+bool CrashHandling::CrashRptDebugReporter::AddScreenshotToReport(IntPtr^ hwnd) {
     return crAddScreenshot2(CR_AS_PROCESS_WINDOWS | CR_AS_ALLOW_DELETE, 100);
 }

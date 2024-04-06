@@ -7,7 +7,7 @@ namespace CrashHandling {
     bool InstallCrashHandler();
 
 
-    value struct DebugReportSource {
+    public value struct DebugReportSource {
         // The source name (often your plugin name), as in the project registered with CrashRpt
         System::String^ application;
         // The current source version
@@ -22,12 +22,12 @@ namespace CrashHandling {
         System::String^ langFilePath;
     };
 
-    interface class IDebugReporter {
+    public interface class IDebugReporter {
         void ReportCrash(DebugReportSource source, System::String^ message);
         void ReportGeneric(DebugReportSource source, System::String^ message);
         bool AddPropertyToReport(System::String^ name, System::String^ value);
         bool AddFileToReport(System::String^ file);
-        bool AddScreenshotToReport(HWND hwnd);
+        bool AddScreenshotToReport(System::IntPtr^ hwnd);
     };
 
     ref class CrashRptDebugReporter : IDebugReporter {
@@ -36,7 +36,7 @@ namespace CrashHandling {
         virtual void ReportGeneric(DebugReportSource source, System::String^ message);
         virtual bool AddPropertyToReport(System::String^ name, System::String^ value);
         virtual bool AddFileToReport(System::String^ file);
-        virtual bool AddScreenshotToReport(HWND hwnd);
+        virtual bool AddScreenshotToReport(System::IntPtr ^hwnd);
     private:
         void SendReport(DebugReportSource source, System::String^ message, CR_EXCEPTION_INFO exception_info);
     };
