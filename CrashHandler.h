@@ -42,14 +42,38 @@ namespace CrashHandling {
         void SendReport(DebugReportSource source, System::String^ message, CR_EXCEPTION_INFO exception_info);
     };
 
+    ref class DummyDebugReporter : IDebugReporter {
+    public:
+        virtual void ReportCrash(DebugReportSource source, System::String^ message) {
+            // Do nothing
+        }
+        virtual void ReportGeneric(DebugReportSource source, System::String^ message) {
+            // Do nothing
+        }
+        virtual bool AddPropertyToReport(System::String^ name, System::String^ value) {
+            return false;
+        }
+        virtual bool AddFileToReport(System::String^ file) {
+            return false;
+        }
+        virtual bool AddScreenshotToReport(System::IntPtr ^hwnd) {
+            return false;
+        }
+    };
+
 
     public ref class DebugService abstract sealed {
     private:
         static IDebugReporter^ instance;
     public:
         static IDebugReporter^ GetReporter() {
-            if (instance == nullptr)
+            if (instance == nullptr) {
+#ifdef TEST
+                instance = gcnew DummyDebugReporter();
+#else
                 instance = gcnew CrashRptDebugReporter();
+#endif
+            }
 
             return instance;
         }
