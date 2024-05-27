@@ -66,20 +66,6 @@ extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVO
     case DLL_PROCESS_ATTACH:
     {
 #ifndef TEST
-        DWORD S4_Main = reinterpret_cast<DWORD>(GetModuleHandle(nullptr));
-
-        hlib::NopPatch s4_exception_handler = hlib::NopPatch(S4_Main + 0x5C855, 5);
-        s4_exception_handler.patch();
-        s4_exception_handler = hlib::NopPatch(S4_Main + 0x951EF6, 5);
-        s4_exception_handler.patch();
-
-
-#ifndef PUBLIC
-        if (GetAsyncKeyState(VK_F2)) {
-            return TRUE;
-        }
-#endif
-
         const HANDLE parent_handle = GetParentProcess();
         wchar_t      process_name[1024] = { 0 };
         DWORD        process_name_size = 1024;
@@ -93,12 +79,22 @@ extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVO
             _stricmp(parent_name.c_str(), "UbisoftGameLauncher64.exe") != 0 &&
             _stricmp(parent_name.c_str(), "S4_Main.exe") != 0) {
             ubisoft_ready = false;
+#ifdef PUBLIC
             return TRUE;
+#else
+            //Instead try to load a crack, we are probably debugging...
+            LoadLibraryA("LumaPlayFiles\\UbiAPI.dll");
+            LoadLibraryA("LumaPlayFiles\\LumaPlay_x86.dll");
+#endif 
         }
 
         ubisoft_ready = true;
 
 #ifndef PUBLIC
+        if (GetAsyncKeyState(VK_F2)) {
+            return TRUE;
+        }
+
         if (GetAsyncKeyState('Q')) {
             MessageBoxA(nullptr, "NetModAPI DEBUG", "NetModAPI", 0);
         }
@@ -118,9 +114,6 @@ extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVO
         break;
     case DLL_PROCESS_DETACH:
         CleanUp();
-#ifndef TEST
-        ExitProcess(-1);
-#endif
         break;
     }
     return TRUE;
