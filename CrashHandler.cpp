@@ -13,7 +13,16 @@ PEXCEPTION_POINTERS g_last_exception_pointers;
 // This is a workaround for the CLR crash handler, which can skip the default forge crash handler.
 bool g_exception_handled_by_clr = false;
 
+bool g_exception_handler_active = true;
+
 LONG __stdcall CrashHandling::ForgeExceptionHandler(PEXCEPTION_POINTERS exception_pointers) {
+    if (!g_exception_handler_active) {
+#ifdef DEBUG
+        MessageBox(nullptr, L"Crash handler was called, while being deactivated. Exception will be ignored.", L"Forge - Error", 0);
+#endif
+        return EXCEPTION_CONTINUE_SEARCH;
+    }
+
     if (g_last_exception_pointers != nullptr) {
         // This indicates, that something went wrong and the crash handler was called twice, probably due to a problem in the crl crash handler.
         MessageBoxW(nullptr, L"Crash handler was called twice", L"Forge - Error", 0);
@@ -44,7 +53,7 @@ LONG __stdcall CrashHandling::ForgeExceptionHandler(PEXCEPTION_POINTERS exceptio
 
 #if DEBUG
     {
-        const wchar_t *message = L"Exception not caught.\n\nAttach debugger and press retry to debug, or press cancel to stop execution. Press ignore to invoke the default error handler";
+        const wchar_t* message = L"Exception not caught.\n\nAttach debugger and press retry to debug, or press cancel to stop execution. Press ignore to invoke the default error handler";
         if (isManagedException) {
             message = L"Managed Exception not caught.\n\nAttach debugger and press retry to debug, or press cancel to stop execution. Press ignore to invoke the default error handler";
         }
@@ -88,7 +97,7 @@ skip_clr_crash_handler:
     return EXCEPTION_CONTINUE_SEARCH;
 }
 
-void GuardedGameTick() {
+void __cdecl GuardedGameTick() {
     DWORD S4_Main = reinterpret_cast<DWORD>(GetModuleHandle(nullptr));
     DWORD retpos = S4_Main + 0x5cba9;
 
@@ -97,6 +106,8 @@ void GuardedGameTick() {
             jmp retpos
         }
     } __except (CrashHandling::ForgeExceptionHandler(GetExceptionInformation())) {}
+
+    return;
 }
 
 
@@ -139,10 +150,19 @@ LPTOP_LEVEL_EXCEPTION_FILTER WINAPI SetUnhandledExceptionFilterDetour(_In_opt_ L
 }
 
 bool CrashHandling::InstallCrashHandler() {
-    // Patch the game loop to catch any straggling exceptions
     DWORD S4_Main = reinterpret_cast<DWORD>(GetModuleHandle(nullptr));
-    hlib::JmpPatch patch = hlib::JmpPatch(S4_Main + 0x5cba3, reinterpret_cast<DWORD>(&_GuardedGameTick));
-    patch.patch();
+
+    // Remove the installation code for the original exception handler
+    hlib::NopPatch s4_exception_handler = hlib::NopPatch(S4_Main + 0x5C855, 5);
+    s4_exception_handler.patch();
+    s4_exception_handler = hlib::NopPatch(S4_Main + 0x951EF6, 5);
+    s4_exception_handler.patch();
+
+    // Patch the game loop to catch any straggling exceptions
+    hlib::JmpPatch(S4_Main + 0x5cba3, reinterpret_cast<DWORD>(&_GuardedGameTick)).patch();
+
+    // Fix a std::wstring::destroy_wstring crash, when deleting a string on the exit of the game
+    hlib::NopPatch(S4_Main + 0x5ccbc, 5).patch();
 
     // This is a workaround for the CLR crash handler in P/Invoke scenarios, which *will* skip the windows SEH Handler.
     // It is only intended to catch corrupted state exceptions, which are not caught by the CLR crash handler.
@@ -205,6 +225,12 @@ bool CrashHandling::InstallCrashHandler() {
         MessageBoxW(nullptr, L"Failed to load CrashRpt", L"Forge - CrashRpt", 0);
         return false;
     }
+
+    return true;
+}
+
+bool CrashHandling::DisableCrashHandler() {
+    g_exception_handler_active = false;
 
     return true;
 }

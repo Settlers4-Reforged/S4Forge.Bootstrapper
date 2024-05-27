@@ -5,6 +5,7 @@ namespace CrashHandling {
     LONG __stdcall ForgeExceptionHandler(PEXCEPTION_POINTERS exception_pointers);
 
     bool InstallCrashHandler();
+    bool DisableCrashHandler();
 
 
     public value struct DebugReportSource {

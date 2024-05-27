@@ -12,6 +12,8 @@
 S4API ModAPI;
 
 static void CleanUp() {
+    CrashHandling::DisableCrashHandler();
+
     if (nullptr != ModAPI) {
         ModAPI->Release();
         ModAPI = nullptr;
