@@ -91,13 +91,14 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)lib\s4modapi;$(ProjectDir)lib\crashrpt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib\s4modapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;$(ProjectDir)lib\crashrpt\lib\CrashRpt1403.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <EmbedManagedResourceFile>$(ProjectDir)lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
-      <DelayLoadDLLs>CrashRpt1403.dll</DelayLoadDLLs>
+      <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EmbedManagedResourceFile>$(ProjectDir)lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll;lib\Sentry.4.10.2\Sentry.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>ijwdependency.xml</AdditionalManifestFiles>
@@ -109,13 +110,13 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>TEST;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)lib\s4modapi;$(ProjectDir)lib\crashrpt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib\s4modapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;$(ProjectDir)lib\crashrpt\lib\CrashRpt1403.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <EmbedManagedResourceFile>$(ProjectDir)lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
-      <DelayLoadDLLs>S4ModAPI.dll;CrashRpt1403.dll</DelayLoadDLLs>
+      <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EmbedManagedResourceFile>$(ProjectDir)lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll;lib\Sentry.4.10.2\Sentry.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
+      <DelayLoadDLLs>S4ModAPI.dll</DelayLoadDLLs>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>ijwdependency.xml</AdditionalManifestFiles>
@@ -127,15 +128,16 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)lib\s4modapi;$(ProjectDir)lib\crashrpt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib\s4modapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;$(ProjectDir)lib\crashrpt\lib\CrashRpt1403.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalManifestDependencies>
       </AdditionalManifestDependencies>
-      <EmbedManagedResourceFile>$(ProjectDir)lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
-      <DelayLoadDLLs>CrashRpt1403.dll</DelayLoadDLLs>
+      <EmbedManagedResourceFile>$(ProjectDir)lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll;lib\Sentry.4.10.2\Sentry.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>ijwdependency.xml</AdditionalManifestFiles>
@@ -143,7 +145,7 @@
   </ItemDefinitionGroup>
   <!--NuGet:-->
   <ItemGroup>
-    <PackageReference Pack="false" Include="NuGet.Build.Tasks.Pack" Version="5.2.0">
+    <PackageReference Pack="false" Include="NuGet.Build.Tasks.Pack" Version="6.11.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <Content Include="BUILD\APIWrapper\$(Configuration)\*.asi">
@@ -176,7 +178,9 @@
     <ClInclude Include="Device.h" />
     <ClInclude Include="DirectX.h" />
     <ClInclude Include="globals.h" />
+    <ClInclude Include="Helper.h" />
     <ClInclude Include="IForge.h" />
+    <ClInclude Include="Lambda2Delegate.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="ManagedIncludes.h" />
     <ClInclude Include="ManagedLoader.h" />
@@ -215,6 +219,11 @@
   <ItemGroup>
     <Reference Include="NLog">
       <HintPath>lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll</HintPath>
+      <Private>true</Private>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+    </Reference>
+    <Reference Include="Sentry">
+      <HintPath>lib\Sentry.4.10.2\Sentry.dll</HintPath>
       <Private>true</Private>
       <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
     </Reference>

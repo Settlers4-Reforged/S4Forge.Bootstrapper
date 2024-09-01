@@ -52,6 +52,9 @@
     <Filter Include="Source Files\S4Hooks">
       <UniqueIdentifier>{068cc480-db2b-4b3c-b529-7b54ba4f818a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Definitions">
+      <UniqueIdentifier>{022ab4ce-6ff3-4a3c-aa86-2f09fdd339ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NetModAPI.h">
@@ -102,6 +105,12 @@
     <ClInclude Include="S4APIHooks.h">
       <Filter>Header Files\ModAPI</Filter>
     </ClInclude>
+    <ClInclude Include="Lambda2Delegate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -147,5 +156,8 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="ijwdependency.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ForgeBuild.props" />
   </ItemGroup>
 </Project>

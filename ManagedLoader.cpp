@@ -66,6 +66,7 @@ DWORD __stdcall InitPlugins(void* param) {
     AppDomain^ currentDomain = AppDomain::CurrentDomain;
     currentDomain->AssemblyResolve += gcnew ResolveEventHandler(&AssemblyLoader);
 
+    CrashHandling::InstallCrashHandler();
     NetModAPI::NetModAPI::LoadForge();
     return 0;
 }

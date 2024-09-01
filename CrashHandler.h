@@ -1,5 +1,4 @@
 #pragma once
-#include <crashrpt.h>
 
 namespace CrashHandling {
     LONG __stdcall ForgeExceptionHandler(PEXCEPTION_POINTERS exception_pointers);
@@ -24,30 +23,34 @@ namespace CrashHandling {
     };
 
     public interface class IDebugReporter {
-        void ReportCrash(DebugReportSource source, System::String^ message);
+        void ReportException(DebugReportSource source, System::String^ message, System::Exception^ exception, bool fatal);
         void ReportGeneric(DebugReportSource source, System::String^ message);
+        void Log(System::String^ origin, System::String^ message);
         bool AddPropertyToReport(System::String^ name, System::String^ value);
         bool AddFileToReport(System::String^ file);
-        bool AddScreenshotToReport(System::IntPtr^ hwnd);
+
+        void SetGpuInfo(System::String^ vendor, System::String^ gpuName, System::String^ renderer);
     };
 
     ref class CrashRptDebugReporter : IDebugReporter {
     public:
-        virtual void ReportCrash(DebugReportSource source, System::String^ message);
+        virtual void ReportException(DebugReportSource source, System::String^ message, System::Exception^ exception, bool fatal);
         virtual void ReportGeneric(DebugReportSource source, System::String^ message);
+        virtual void Log(System::String^ origin, System::String^ message);
         virtual bool AddPropertyToReport(System::String^ name, System::String^ value);
         virtual bool AddFileToReport(System::String^ file);
-        virtual bool AddScreenshotToReport(System::IntPtr ^hwnd);
-    private:
-        void SendReport(DebugReportSource source, System::String^ message, CR_EXCEPTION_INFO exception_info);
+        virtual void SetGpuInfo(System::String^ vendor, System::String^ gpuName, System::String^ renderer);
     };
 
     ref class DummyDebugReporter : IDebugReporter {
     public:
-        virtual void ReportCrash(DebugReportSource source, System::String^ message) {
+        virtual void ReportException(DebugReportSource source, System::String^ message, System::Exception^ exception, bool fatal) {
             // Do nothing
         }
         virtual void ReportGeneric(DebugReportSource source, System::String^ message) {
+            // Do nothing
+        }
+        virtual void Log(System::String^ origin, System::String^ message) {
             // Do nothing
         }
         virtual bool AddPropertyToReport(System::String^ name, System::String^ value) {
@@ -56,8 +59,8 @@ namespace CrashHandling {
         virtual bool AddFileToReport(System::String^ file) {
             return false;
         }
-        virtual bool AddScreenshotToReport(System::IntPtr ^hwnd) {
-            return false;
+        virtual void SetGpuInfo(System::String^ vendor, System::String^ gpuName, System::String^ renderer) {
+            // Do nothing
         }
     };
 

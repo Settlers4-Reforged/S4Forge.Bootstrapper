@@ -40,7 +40,7 @@ bool NetModAPI::NetModAPI::LoadForge() {
         Assembly^ pluginAssembly = Assembly::LoadFrom(file);
         auto      types = gcnew List<Type^>(pluginAssembly->GetTypes());
 
-        Type^ pluginClass = Enumerable::SingleOrDefault(Enumerable::Where(types, gcnew Func<Type^, bool>(&IsIPlugin)));
+        Type^ pluginClass = Linq::Enumerable::SingleOrDefault(Linq::Enumerable::Where(types, gcnew Func<Type^, bool>(&IsIPlugin)));
         if(pluginClass == nullptr)
             return false;
 
@@ -56,6 +56,8 @@ bool NetModAPI::NetModAPI::LoadForge() {
 
         String^ errorMsg = String::Format("Error during load of Forge \nError: {0}\n\n============= Stack Trace =============\n{1}", e->Message, stackTrace);
         Logger::LogError(errorMsg, e, nullptr);
+
+        CrashHandling::DebugService::GetReporter()->ReportException(CrashHandling::DebugReportSource{ "S4Forge" }, "Error during load of Forge", e, true);
     }
     return true;
 }

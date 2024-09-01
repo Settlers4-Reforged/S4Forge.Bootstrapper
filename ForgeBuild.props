@@ -3,11 +3,11 @@
     <!-- Forge Build System: -->
     <PropertyGroup>
         <ProjectType>Forge</ProjectType>
-        <CrashRptDir>$(ProjectDir)lib\crashrpt\bin</CrashRptDir>
+        <CrashRptDir>$(ProjectDir)lib\SentryReporter</CrashRptDir>
     </PropertyGroup>
     <ItemGroup>
         <ExportFile Include="$(OutputPath)Ijwhost.dll"/>
-        <ExportFile Include="$(CrashRptDir)\crashrpt_lang.ini;$(CrashRptDir)\CrashRpt1403.dll;$(CrashRptDir)\CrashSender1403.exe;$(CrashRptDir)\dbghelp.dll">
+        <ExportFile Include="$(CrashRptDir)\ForgeCrashReporter.exe;$(CrashRptDir)\dbghelp.dll;$(CrashRptDir)\libHarfBuzzSharp.dll;$(CrashRptDir)\libSkiaSharp.dll;$(CrashRptDir)\av_libglesv2.dll">
             <ExportFileDir>\Forge\CrashRpt</ExportFileDir>
         </ExportFile>
     </ItemGroup>

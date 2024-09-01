@@ -33,7 +33,6 @@ extern "C" __declspec(dllexport) void InitAsi() {
 }
 
 static bool Init() {
-    CrashHandling::InstallCrashHandler();
 
     ModAPI = S4ApiCreate(); // get an interface to the mod api
     if (ModAPI == nullptr) return false;
