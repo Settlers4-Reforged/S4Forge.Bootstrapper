@@ -220,11 +220,13 @@
     <Reference Include="NLog">
       <HintPath>lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll</HintPath>
       <Private>true</Private>
+      <PrivateAssets>all</PrivateAssets>
       <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
     </Reference>
     <Reference Include="Sentry">
       <HintPath>lib\Sentry.4.10.2\Sentry.dll</HintPath>
       <Private>true</Private>
+      <PrivateAssets>all</PrivateAssets>
       <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
     </Reference>
   </ItemGroup>
