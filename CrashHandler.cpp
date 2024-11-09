@@ -50,6 +50,8 @@ void _declspec(naked) _GuardedGameTick() {
 bool CrashHandling::InstallCrashHandler() {
     DWORD S4_Main = reinterpret_cast<DWORD>(GetModuleHandle(nullptr));
 
+    g_clr_crash_handler = UnhandledExceptionFilter;
+
     // Remove the installation code for the original exception handler
     hlib::NopPatch s4_exception_handler = hlib::NopPatch(S4_Main + 0x5C855, 5);
     s4_exception_handler.patch();
@@ -189,7 +191,7 @@ void CrashHandling::CrashRptDebugReporter::SetGpuInfo(System::String^ vendor, Sy
     SentrySetGpuInfo(vendor, gpuName, renderer);
 }
 
-void HandleNativeException(PEXCEPTION_POINTERS exception_pointers) {
+void HandleNativeException(PEXCEPTION_POINTERS exception_pointers, bool isManaged) {
     MINIDUMP_EXCEPTION_INFORMATION minidump_exception_information = MINIDUMP_EXCEPTION_INFORMATION();
     minidump_exception_information.ThreadId = GetCurrentThreadId();
     minidump_exception_information.ExceptionPointers = exception_pointers;
@@ -197,7 +199,7 @@ void HandleNativeException(PEXCEPTION_POINTERS exception_pointers) {
 
     const wchar_t* dumpFilePath = L"plugins/Forge/CrashRpt/ForgeCrash.dmp";
     HANDLE         dumpFileHandle = CreateFileW(dumpFilePath, GENERIC_WRITE, FILE_SHARE_WRITE, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-    MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFileHandle, MiniDumpNormal, exception_pointers == nullptr ? nullptr : &minidump_exception_information, nullptr, nullptr);
+    MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFileHandle, MiniDumpNormal, (exception_pointers == nullptr && !isManaged) ? nullptr : &minidump_exception_information, nullptr, nullptr);
     CloseHandle(dumpFileHandle);
 
     AddAttachmentToSentry(gcnew String(dumpFilePath), exception_pointers != nullptr);
@@ -207,7 +209,7 @@ void HandleNativeException(PEXCEPTION_POINTERS exception_pointers) {
 
 void CrashHandling::CrashRptDebugReporter::ReportException(DebugReportSource source, String^ message, Exception^ exception, bool fatal) {
     AddPropertyToReport("ReportType", "Crash");
-    HandleNativeException(g_last_exception_pointers);
+    HandleNativeException(g_last_exception_pointers, true);
     ::ReportException(exception, fatal);
 }
 
@@ -229,7 +231,6 @@ LONG __stdcall CrashHandling::ForgeExceptionHandler(PEXCEPTION_POINTERS exceptio
         goto skip_clr_crash_handler;
     }
 
-    HandleNativeException(exception_pointers);
 
     g_last_exception_pointers = exception_pointers;
 
@@ -252,6 +253,8 @@ LONG __stdcall CrashHandling::ForgeExceptionHandler(PEXCEPTION_POINTERS exceptio
             isManagedException = true;
         }
     }
+
+    HandleNativeException(exception_pointers, isManagedException);
 
 
 #if DEBUG
@@ -288,4 +291,4 @@ LONG __stdcall CrashHandling::ForgeExceptionHandler(PEXCEPTION_POINTERS exceptio
 skip_clr_crash_handler:
     ReportException(gcnew SEHException("Unhandled unmanaged exception was thrown"), true);
     return EXCEPTION_CONTINUE_SEARCH;
-        }
+}
