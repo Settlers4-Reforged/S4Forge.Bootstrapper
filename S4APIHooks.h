@@ -147,7 +147,10 @@ static HRESULT __stdcall CS4GUIClearCallback(LPS4GUICLEARPARAMS entity, BOOL dis
 extern LONG_PTR oldWndProc;
 
 static LRESULT CALLBACK HookedWndProcedure(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    HandleCallback(S4WndProcList, hwnd, uMsg, wParam, lParam);
+    HRESULT should_skip = HandleCallback(S4WndProcList, hwnd, uMsg, wParam, lParam);
+    if (should_skip) {
+        return 0;
+    }
 
     return CallWindowProc((WNDPROC)oldWndProc, hwnd, uMsg, wParam, lParam);
 }
