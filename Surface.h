@@ -1,8 +1,29 @@
 #pragma once
 #include "DirectX.h"
+#include "d3d9.h"
 
+#pragma make_public(RECT)
+#pragma make_public(IDirect3DTexture9)
 
 namespace Microsoft::DirectX::DirectDraw {
+
+    public ref struct SurfaceDesc {
+    public:
+        DWORD dwSize;
+        DWORD dwFlags;
+        DWORD dwHeight;
+        DWORD dwWidth;
+        LONG lPitch;
+        DWORD dwBackBufferCount;
+        DWORD dwMipMapCount;
+        DWORD dwZBufferBitDepth;
+        DWORD dwAlphaBitDepth;
+        DWORD dwReserved;
+        LPVOID lpSurface;
+        //DDSCAPS2 ddsCaps;
+        DWORD dwTextureStage;
+    };
+
     public ref class Surface : IDisposable {
     private:
         IDirectDrawSurface7* m_surface;
@@ -21,6 +42,131 @@ namespace Microsoft::DirectX::DirectDraw {
 
         ~Surface() {
             DeleteObject(m_brush);
+        }
+
+        property IDirect3DSurface9* NativeSurface {
+            IDirect3DSurface9* get() {
+                return reinterpret_cast<IDirect3DSurface9*>(reinterpret_cast<int*>(m_surface)[43]);
+            }
+        }
+
+        property IDirect3DDevice9* Device {
+            IDirect3DDevice9* get() {
+                IDirect3DDevice9* device;
+                NativeSurface->GetDevice(&device);
+                return device;
+            }
+        }
+
+        property IDirect3D9* Direct3D {
+            IDirect3D9* get() {
+                IDirect3D9* d3d;
+                Device->GetDirect3D(&d3d);
+                return d3d;
+            }
+        }
+
+        void SetAsDeviceRenderTarget() {
+            IDirect3DDevice9* device;
+            NativeSurface->GetDevice(&device);
+            device->SetRenderTarget(0, NativeSurface);
+        }
+
+        // ResetD3D and PrepareD3D are used for SDL compatibility rendering
+
+        IDirect3DVertexShader9* defaultVertexShader;
+        IDirect3DPixelShader9* defaultPixelShader;
+        DWORD defaultMinFilter, defaultMagFilter;
+        void ResetD3D() {
+            IDirect3DDevice9* device = Device;
+            // Not resetting will prevent any rendering
+            IDirect3DDevice9_SetVertexShader(device, defaultVertexShader);
+            IDirect3DDevice9_SetPixelShader(device, defaultPixelShader);
+
+            //TODO: find a way to actually have linear+ filtering as it can drastically improve the look of the game
+            // Not resetting will lead to "smearing" in the terrain engine
+            IDirect3DDevice9_SetSamplerState(device, 0, D3DSAMP_MINFILTER, defaultMinFilter);
+            // Not resetting will break the color keying for e.g. the chat
+            IDirect3DDevice9_SetSamplerState(device, 0, D3DSAMP_MAGFILTER, defaultMinFilter);
+        }
+
+        void PrepareD3D() {
+            IDirect3DDevice9* device = Device;
+
+            // Fetch previous state:
+            DWORD _defaultMinFilter, _defaultMagFilter;
+            IDirect3DDevice9_GetSamplerState(device, 0, D3DSAMP_MINFILTER, &_defaultMinFilter);
+            IDirect3DDevice9_GetSamplerState(device, 0, D3DSAMP_MAGFILTER, &_defaultMagFilter);
+            defaultMinFilter = _defaultMinFilter;
+            defaultMagFilter = _defaultMagFilter;
+
+            IDirect3DPixelShader9* _defaultPixelShader;
+            IDirect3DDevice9_GetPixelShader(device, &_defaultPixelShader);
+            defaultPixelShader = _defaultPixelShader;
+
+            // Reset state to a SDL compatible state
+            IDirect3DDevice9_SetPixelShader(device, NULL);
+            IDirect3DDevice9_SetTexture(device, 0, NULL);
+            IDirect3DDevice9_SetTexture(device, 1, NULL);
+            IDirect3DDevice9_SetTexture(device, 2, NULL);
+            IDirect3DDevice9_SetFVF(device, D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1);
+
+            IDirect3DVertexShader9* _defaultVertexShader;
+            IDirect3DDevice9_GetVertexShader(device, &_defaultVertexShader);
+            defaultVertexShader = _defaultVertexShader;
+            IDirect3DDevice9_SetVertexShader(device, NULL);
+            IDirect3DDevice9_SetRenderState(device, D3DRS_ZENABLE, D3DZB_FALSE);
+            IDirect3DDevice9_SetRenderState(device, D3DRS_CULLMODE, D3DCULL_NONE);
+            IDirect3DDevice9_SetRenderState(device, D3DRS_LIGHTING, FALSE);
+
+            // Enable color modulation by diffuse color
+            IDirect3DDevice9_SetTextureStageState(device, 0, D3DTSS_COLOROP,
+                D3DTOP_MODULATE);
+            IDirect3DDevice9_SetTextureStageState(device, 0, D3DTSS_COLORARG1,
+                D3DTA_TEXTURE);
+            IDirect3DDevice9_SetTextureStageState(device, 0, D3DTSS_COLORARG2,
+                D3DTA_DIFFUSE);
+
+            // Enable alpha modulation by diffuse alpha
+            IDirect3DDevice9_SetTextureStageState(device, 0, D3DTSS_ALPHAOP,
+                D3DTOP_MODULATE);
+            IDirect3DDevice9_SetTextureStageState(device, 0, D3DTSS_ALPHAARG1,
+                D3DTA_TEXTURE);
+            IDirect3DDevice9_SetTextureStageState(device, 0, D3DTSS_ALPHAARG2,
+                D3DTA_DIFFUSE);
+
+            // Disable second texture stage, since we're done
+            IDirect3DDevice9_SetTextureStageState(device, 1, D3DTSS_COLOROP,
+                D3DTOP_DISABLE);
+            IDirect3DDevice9_SetTextureStageState(device, 1, D3DTSS_ALPHAOP,
+                D3DTOP_DISABLE);
+
+            // Set an identity world and view matrix
+            D3DMATRIX matrix{};
+            matrix.m[0][0] = 1.0f;
+            matrix.m[1][1] = 1.0f;
+            matrix.m[2][2] = 1.0f;
+            matrix.m[3][3] = 1.0f;
+            IDirect3DDevice9_SetTransform(device, D3DTS_WORLD, &matrix);
+            IDirect3DDevice9_SetTransform(device, D3DTS_VIEW, &matrix);
+        }
+
+        void BeginDeviceScene() {
+            IDirect3DDevice9* device;
+            NativeSurface->GetDevice(&device);
+            HRESULT result = device->BeginScene();
+            if (result != D3D_OK) {
+                throw gcnew System::Exception("EndScene failed");
+            }
+        }
+
+        void EndDeviceScene() {
+            IDirect3DDevice9* device;
+            NativeSurface->GetDevice(&device);
+            HRESULT result = device->EndScene();
+            if (result != D3D_OK) {
+                throw gcnew System::Exception("EndScene failed");
+            }
         }
 
         property IDirectDrawSurface7* Native {
@@ -186,8 +332,23 @@ namespace Microsoft::DirectX::DirectDraw {
             HRESULT_CHECK(m_surface->IsLost());
         }
 
-        void Lock(LPRECT a, LPDDSURFACEDESC2 b, DWORD c, HANDLE d) {
-            HRESULT_CHECK(m_surface->Lock(a, b, c, d));
+        Microsoft::DirectX::DirectDraw::SurfaceDesc^ Lock(RECT* a, DWORD flags, HANDLE d) {
+            DDSURFACEDESC2 desc;
+            ZeroMemory(&desc, sizeof(desc));
+            desc.dwSize = sizeof(desc);
+
+            HRESULT_CHECK(m_surface->Lock(a, &desc, flags, d));
+
+            Microsoft::DirectX::DirectDraw::SurfaceDesc^ surfaceDesc = gcnew Microsoft::DirectX::DirectDraw::SurfaceDesc();
+            surfaceDesc->dwSize = desc.dwSize;
+            surfaceDesc->dwFlags = desc.dwFlags;
+            surfaceDesc->dwHeight = desc.dwHeight;
+            surfaceDesc->dwWidth = desc.dwWidth;
+            surfaceDesc->lPitch = desc.lPitch;
+            surfaceDesc->lpSurface = desc.lpSurface;
+            //TODO: maybe fill in other data
+
+            return surfaceDesc;
         }
 
         void ReleaseDC(HDC a) {
