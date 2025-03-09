@@ -23,21 +23,31 @@ static void CleanUp() {
 bool ubisoft_ready = false;
 
 extern "C" __declspec(dllexport) void InitAsi() {
+    // Ubisoft didn't load, so skip Forge...
     if (!ubisoft_ready) {
         return;
     }
 
+#ifndef PUBLIC
+    // Conditionally disable Forge if F2 is pressed
+    if (GetAsyncKeyState(VK_F2)) {
+        return;
+    }
+
+    AllocConsole();
+    freopen("CONOUT$", "w", stdout);
+    freopen("CONOUT$", "w", stderr);
+#endif // !PUBLIC
+
     __try {
+        // Load Mod API
+        ModAPI = S4ApiCreate();
+        if (ModAPI == nullptr) {
+            throw new std::exception("Failed to initialize the mod api");
+        }
+
         InitPlugins(nullptr);
     } __except (CrashHandling::ForgeExceptionHandler(GetExceptionInformation())) {}
-}
-
-static bool Init() {
-
-    ModAPI = S4ApiCreate(); // get an interface to the mod api
-    if (ModAPI == nullptr) return false;
-
-    return true;
 }
 
 HANDLE GetParentProcess() {
@@ -64,7 +74,6 @@ extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVO
     switch (ul_reason_for_call) {
     case DLL_PROCESS_ATTACH:
     {
-#ifndef TEST
         const HANDLE parent_handle = GetParentProcess();
         wchar_t      process_name[1024] = { 0 };
         DWORD        process_name_size = 1024;
@@ -84,27 +93,10 @@ extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVO
             //Instead try to load a crack, we are probably debugging...
             LoadLibraryA("LumaPlayFiles\\UbiAPI.dll");
             LoadLibraryA("LumaPlayFiles\\LumaPlay_x86.dll");
-#endif 
+#endif
         }
 
         ubisoft_ready = true;
-
-#ifndef PUBLIC
-        if (GetAsyncKeyState(VK_F2)) {
-            return TRUE;
-        }
-
-        if (GetAsyncKeyState('Q')) {
-            MessageBoxA(nullptr, "NetModAPI DEBUG", "NetModAPI", 0);
-        }
-
-        AllocConsole();
-        freopen("CONOUT$", "w", stdout);
-        freopen("CONOUT$", "w", stderr);
-#endif // !PUBLIC
-
-        if (!Init()) break;
-#endif
         break;
     }
     case DLL_THREAD_ATTACH:
