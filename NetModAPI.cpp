@@ -28,7 +28,7 @@ bool IsIPlugin(Type^ type) {
 bool NetModAPI::NetModAPI::LoadForge() {
 #pragma warning(suppress : 4947)
 
-    String^ file = "plugins\\S4Forge.dll";
+    String^ file = "plugins\\Forge\\S4Forge.dll";
     if(!File::Exists(file)) {
         Logger::LogError("S4Forge.dll not found in plugins folder!", nullptr, nullptr);
         return false;
