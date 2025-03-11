@@ -148,6 +148,9 @@
     <PackageReference Pack="false" Include="NuGet.Build.Tasks.Pack" Version="6.11.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="ForgeSDK" Version="0.4.0">
+        <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <Content Include="BUILD\APIWrapper\$(Configuration)\*.asi">
       <Pack>true</Pack>
       <PackagePath>lib/net80</PackagePath>
