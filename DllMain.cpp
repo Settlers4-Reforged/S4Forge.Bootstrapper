@@ -69,31 +69,48 @@ HANDLE GetParentProcess() {
 
     return OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, processEntry.th32ParentProcessID);
 }
+
 extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
-    //MessageBoxA(nullptr, "NetModAPI DEBUG", "NetModAPI", 0);
+    /* NOTE(WizzardMaker):
+     * Do not use any reference of std::string or any other managed type
+     * This will incur a load time cost, especially during debugging
+     * It will also cause a loader lock for Test/Non S4 run environments
+     */
+
     switch (ul_reason_for_call) {
     case DLL_PROCESS_ATTACH:
     {
+
         const HANDLE parent_handle = GetParentProcess();
         wchar_t      process_name[1024] = { 0 };
         DWORD        process_name_size = 1024;
         QueryFullProcessImageNameW(parent_handle, 0, process_name, &process_name_size);
-        const std::filesystem::path process_file_path(process_name);
+        CloseHandle(parent_handle);
+        wchar_t process_file_path[MAX_PATH];
+        wcscpy_s(process_file_path, process_name);
 
-        const std::string parent_name = process_file_path.filename().string();
+        wchar_t* parent_name_w = wcsrchr(process_file_path, L'\\');
+        if (parent_name_w != nullptr) {
+            parent_name_w++;
+        } else {
+            parent_name_w = process_file_path;
+        }
+
+        char parent_name[MAX_PATH];
+        wcstombs(parent_name, parent_name_w, MAX_PATH);
 
         // abort if we're not called from Ubisoft Launcher or Internal Call... (Prevents loading in first call)
-        if (_stricmp(parent_name.c_str(), "UbisoftGameLauncher.exe") != 0 &&
-            _stricmp(parent_name.c_str(), "UbisoftGameLauncher64.exe") != 0 &&
-            _stricmp(parent_name.c_str(), "S4_Main.exe") != 0) {
+        if (_stricmp(parent_name, "UbisoftGameLauncher.exe") != 0 &&
+            _stricmp(parent_name, "UbisoftGameLauncher64.exe") != 0 &&
+            _stricmp(parent_name, "S4_Main.exe") != 0) {
             ubisoft_ready = false;
-#ifdef PUBLIC
+        #ifdef PUBLIC
             return TRUE;
-#else
+        #else
             //Instead try to load a crack, we are probably debugging...
             LoadLibraryA("LumaPlayFiles\\UbiAPI.dll");
             LoadLibraryA("LumaPlayFiles\\LumaPlay_x86.dll");
-#endif
+        #endif
         }
 
         ubisoft_ready = true;
