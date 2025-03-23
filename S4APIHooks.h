@@ -55,7 +55,7 @@ DEFINE_CALLBACK_LIST(S4GUICLEARCALLBACK, S4GUIClearCallback)
 DEFINE_CALLBACK_LIST(S4WNDPROC, S4WndProc)
 
 template <class func, class... Rest>
-static HRESULT HandleCallback(std::vector<Callback<func>*> functions, Rest... rest) {
+static HRESULT HandleCallback(std::vector<Callback<func>*> &functions, Rest... rest) {
     for(auto call : functions) {
         const auto result = call->callbackFunction(rest...);
         if(result != 0) {
@@ -67,7 +67,7 @@ static HRESULT HandleCallback(std::vector<Callback<func>*> functions, Rest... re
 }
 
 template <class func>
-static BOOL RemoveCallback(int index, std::vector<Callback<func>*> list) {
+static BOOL RemoveCallback(int index, std::vector<Callback<func>*> &list) {
     for(auto callback : list) {
         if(callback->id == index)
             return TRUE;
