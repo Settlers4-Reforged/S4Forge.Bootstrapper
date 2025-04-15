@@ -61,6 +61,7 @@ Assembly^ AssemblyLoader(Object^ sender, ResolveEventArgs^ args) {
 }
 
 DWORD __stdcall InitPlugins(void* param) {
+#pragma warning(disable:4947)
     AppDomain::CurrentDomain->AppendPrivatePath("plugins\\");
 
     AppDomain^ currentDomain = AppDomain::CurrentDomain;

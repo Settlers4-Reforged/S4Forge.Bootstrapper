@@ -22,6 +22,7 @@ bool g_exception_handled_by_clr = false;
 
 bool g_exception_handler_active = true;
 
+#pragma unmanaged
 
 void __cdecl GuardedGameTick() {
     DWORD S4_Main = reinterpret_cast<DWORD>(GetModuleHandle(nullptr));
@@ -46,6 +47,8 @@ void _declspec(naked) _GuardedGameTick() {
     // Separate function to allow for the __try SEH block
     GuardedGameTick();
 }
+
+#pragma managed
 
 bool CrashHandling::InstallCrashHandler() {
     DWORD S4_Main = reinterpret_cast<DWORD>(GetModuleHandle(nullptr));

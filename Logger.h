@@ -4,7 +4,7 @@ using namespace System;
 
 namespace NetModAPI {
     ref class Logger abstract sealed {
-        static String^ log_path = Environment::CurrentDirectory->TrimEnd('/', '\\') +  "/plugins/Forge/Logs/";
+        static String^ log_path = Environment::CurrentDirectory->TrimEnd(L'/', L'\\') +  "/plugins/Forge/Logs/";
 
         static NLog::ILogger^ log = nullptr;
         static NLog::ILogger^ error_log = nullptr;

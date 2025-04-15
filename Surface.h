@@ -181,7 +181,7 @@ namespace Microsoft::DirectX::DirectDraw {
 
         property LPDDCOLORKEY ColorKey {
             LPDDCOLORKEY get() {
-                LPDDCOLORKEY colorKey;
+                LPDDCOLORKEY colorKey{};
                 HRESULT_CHECK(m_surface->GetColorKey(0, colorKey));
                 return colorKey;
             }

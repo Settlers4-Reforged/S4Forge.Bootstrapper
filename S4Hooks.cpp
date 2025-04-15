@@ -1,4 +1,5 @@
 #include "pch.h"
+#pragma unmanaged
 #include "S4Hooks.h"
 
 using namespace S4Hook;
