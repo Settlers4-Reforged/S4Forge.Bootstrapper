@@ -157,13 +157,13 @@
       <Pack>true</Pack>
       <PackagePath>lib/net80</PackagePath>
     </Content>
-    <Content Include="NuGet/S4APIWrapper.targets">
+    <Content Include="NuGet/S4ForgeBootstrapper.targets">
       <Pack>true</Pack>
       <PackagePath>build/</PackagePath>
     </Content>
   </ItemGroup>
   <PropertyGroup>
-    <PackageId>S4APIWrapper</PackageId>
+    <PackageId>S4ForgeBootstrapper</PackageId>
     <Version>$(AssemblyVersion)</Version>
     <Authors>WizzardMaker</Authors>
     <Description>Thin .Net wrapper for the Settlers 4 Mod API by Nyfrik</Description>
