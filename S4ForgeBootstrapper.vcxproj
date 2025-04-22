@@ -158,7 +158,7 @@
       <PackagePath>lib/net80</PackagePath>
     </Content>
     <None Include="README.md" Pack="true" PackagePath="\"/>
-    <Content Include="NuGet/S4ForgeBootstrapper.targets">
+    <Content Include="NuGet/S4Forge.Bootstrapper.targets">
       <Pack>true</Pack>
       <PackagePath>build/</PackagePath>
     </Content>
