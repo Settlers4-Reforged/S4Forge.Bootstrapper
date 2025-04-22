@@ -78,7 +78,10 @@ namespace Microsoft::DirectX::DirectDraw {
         IDirect3DPixelShader9* defaultPixelShader;
         DWORD defaultMinFilter, defaultMagFilter;
         void ResetD3D() {
+            D3DPERF_BeginEvent(0xff00ff, L"Cleanup SDL");
+
             IDirect3DDevice9* device = Device;
+
             // Not resetting will prevent any rendering
             IDirect3DDevice9_SetVertexShader(device, defaultVertexShader);
             IDirect3DDevice9_SetPixelShader(device, defaultPixelShader);
@@ -88,15 +91,32 @@ namespace Microsoft::DirectX::DirectDraw {
             IDirect3DDevice9_SetSamplerState(device, 0, D3DSAMP_MINFILTER, defaultMinFilter);
             // Not resetting will break the color keying for e.g. the chat
             IDirect3DDevice9_SetSamplerState(device, 0, D3DSAMP_MAGFILTER, defaultMinFilter);
+
+            D3DPERF_EndEvent();
+
+            D3DPERF_EndEvent(); //SDL RENDER
+        }
+
+        IDirect3DSurface9 *mainRenderTarget;
+        void RestoreMainRenderTarget() {
+            IDirect3DDevice9* device = Device;
+            IDirect3DDevice9_SetRenderTarget(device, 0, mainRenderTarget);
         }
 
         void PrepareD3D() {
             IDirect3DDevice9* device = Device;
 
+            D3DPERF_SetMarker(0xffff00, L"Start SDL Render");
+
+            D3DPERF_BeginEvent(0xff00ff, L"SDL Render");
+            D3DPERF_BeginEvent(0xff00ff, L"Prepare SDL");
+
             // Fetch previous state:
             DWORD _defaultMinFilter, _defaultMagFilter;
             IDirect3DDevice9_GetSamplerState(device, 0, D3DSAMP_MINFILTER, &_defaultMinFilter);
             IDirect3DDevice9_GetSamplerState(device, 0, D3DSAMP_MAGFILTER, &_defaultMagFilter);
+            IDirect3DDevice9_SetSamplerState(device, 0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+            IDirect3DDevice9_SetSamplerState(device, 0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
             defaultMinFilter = _defaultMinFilter;
             defaultMagFilter = _defaultMagFilter;
 
@@ -141,6 +161,9 @@ namespace Microsoft::DirectX::DirectDraw {
             IDirect3DDevice9_SetTextureStageState(device, 1, D3DTSS_ALPHAOP,
                 D3DTOP_DISABLE);
 
+            // Enable separate alpha blend function, if possible
+            IDirect3DDevice9_SetRenderState(device, D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
+
             // Set an identity world and view matrix
             D3DMATRIX matrix{};
             matrix.m[0][0] = 1.0f;
@@ -149,6 +172,17 @@ namespace Microsoft::DirectX::DirectDraw {
             matrix.m[3][3] = 1.0f;
             IDirect3DDevice9_SetTransform(device, D3DTS_WORLD, &matrix);
             IDirect3DDevice9_SetTransform(device, D3DTS_VIEW, &matrix);
+            IDirect3DDevice9_SetTransform(device, D3DTS_PROJECTION, &matrix);
+            IDirect3DDevice9_SetTransform(device, D3DTS_TEXTURE0, &matrix); // Texture matrix for Tooltips change in game, this reverts it to identity
+
+            D3DVIEWPORT9 viewport = {};
+            IDirect3DDevice9_GetViewport(device, &viewport);
+
+            IDirect3DSurface9 *renderTarget;
+            IDirect3DDevice9_GetRenderTarget(device, 0, &renderTarget);
+            this->mainRenderTarget = renderTarget;
+
+            D3DPERF_EndEvent();
         }
 
         void BeginDeviceScene() {

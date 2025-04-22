@@ -96,7 +96,7 @@
       <AdditionalOptions>/clr:ECMAParamArray %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EmbedManagedResourceFile>$(ProjectDir)lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll;lib\Sentry.4.10.2\Sentry.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
       <DelayLoadDLLs>S4ModAPI.dll</DelayLoadDLLs>
     </Link>
@@ -115,7 +115,7 @@
       <AdditionalOptions>/clr:ECMAParamArray %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EmbedManagedResourceFile>$(ProjectDir)lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll;lib\Sentry.4.10.2\Sentry.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
       <DelayLoadDLLs>S4ModAPI.dll</DelayLoadDLLs>
     </Link>
@@ -134,7 +134,7 @@
       <AdditionalOptions>/clr:ECMAParamArray %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalManifestDependencies>
       </AdditionalManifestDependencies>
       <EmbedManagedResourceFile>$(ProjectDir)lib\NLog.5.2.0\lib\netstandard2.0\NLog.dll;lib\Sentry.4.10.2\Sentry.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
