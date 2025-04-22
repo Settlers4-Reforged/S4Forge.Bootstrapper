@@ -150,28 +150,35 @@
     <PackageReference Pack="false" Include="NuGet.Build.Tasks.Pack" Version="6.11.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="ForgeSDK" Version="0.4.0">
+    <PackageReference Include="S4Forge.SDK" Version="0.4.3">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <Content Include="BUILD\APIWrapper\$(Configuration)\*.asi">
       <Pack>true</Pack>
       <PackagePath>lib/net80</PackagePath>
     </Content>
+    <None Include="README.md" Pack="true" PackagePath="\"/>
     <Content Include="NuGet/S4ForgeBootstrapper.targets">
       <Pack>true</Pack>
       <PackagePath>build/</PackagePath>
     </Content>
   </ItemGroup>
   <PropertyGroup>
-    <PackageId>S4ForgeBootstrapper</PackageId>
+    <PackageId>S4Forge.Bootstrapper</PackageId>
     <Version>$(AssemblyVersion)</Version>
     <Authors>WizzardMaker</Authors>
-    <Description>Thin .Net wrapper for the Settlers 4 Mod API by Nyfrik</Description>
+    <Description>Bootstrapper for S4Forge - initializes .Net and provides low level functionality</Description>
     <IncludeBuildOutput>true</IncludeBuildOutput>
     <IncludeSymbols>true</IncludeSymbols>
     <IsPackable>true</IsPackable>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageOutputPath>$(SolutionDir)BUILD\NuGet\</PackageOutputPath>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <RepositoryUrl>https://github.com/Settlers-4-Reforged/S4Forge</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <!--
       GeneratePackageOnBuild should stay false, because we have to manually add the asi file
       after build and NuGet thinks it's smart and includes non build files *before* the build finished...
