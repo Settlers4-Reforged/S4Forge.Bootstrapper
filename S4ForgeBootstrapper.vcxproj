@@ -150,7 +150,7 @@
     <PackageReference Pack="false" Include="NuGet.Build.Tasks.Pack" Version="6.11.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="S4Forge.SDK" Version="0.4.3">
+    <PackageReference Include="S4Forge.SDK" Version="0.5.*">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <Content Include="BUILD\APIWrapper\$(Configuration)\*.asi">
