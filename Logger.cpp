@@ -96,7 +96,10 @@ void NetModAPI::Logger::LogWarn(String^ msg, [System::Runtime::InteropServices::
 }
 
 void NetModAPI::Logger::LogError(String^ msg, Exception^ exception, [System::Runtime::InteropServices::Optional]String^ logger) {
-    GetErrorLogger(logger)->Error(exception, msg);
+    if (exception->Data["Stack"] != nullptr) {
+        msg += "\n### Stack Trace ###\n" + exception->Data["Stack"];
+    }
+    GetErrorLogger(logger)->Error(msg);
     Debugger::Break();
 }
 

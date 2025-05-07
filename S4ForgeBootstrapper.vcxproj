@@ -209,6 +209,7 @@
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="CrashHandler.cpp" />
     <ClCompile Include="DllMain.cpp" />
+    <ClCompile Include="Helper.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="ManagedLoader.cpp" />
     <ClCompile Include="NetModAPI.cpp" />

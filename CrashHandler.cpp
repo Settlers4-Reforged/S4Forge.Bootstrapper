@@ -207,7 +207,7 @@ void HandleNativeException(PEXCEPTION_POINTERS exception_pointers, bool isManage
 
     AddAttachmentToSentry(gcnew String(dumpFilePath), exception_pointers != nullptr);
 
-    SentrySdk::AddBreadcrumb(GetStackTrace(exception_pointers), "Native Stack Trace", "error", nullptr, BreadcrumbLevel::Error);
+    SentrySdk::AddBreadcrumb(GetStackTrace(exception_pointers, 0, false), "Native Stack Trace", "error", nullptr, BreadcrumbLevel::Error);
 }
 
 void CrashHandling::CrashRptDebugReporter::ReportException(DebugReportSource source, String^ message, Exception^ exception, bool fatal) {

@@ -1,4 +1,5 @@
 #pragma once
+#include "Helper.h"
 
 namespace CrashHandling {
     LONG __stdcall ForgeExceptionHandler(PEXCEPTION_POINTERS exception_pointers);
@@ -69,6 +70,10 @@ namespace CrashHandling {
     private:
         static IDebugReporter^ instance;
     public:
+        static System::String^ GetFullStacktrace(int skip, bool skipToFirstManaged) {
+            return GetStackTrace(nullptr, skip, skipToFirstManaged);
+        }
+
         static IDebugReporter^ GetReporter() {
             if (instance == nullptr) {
 #ifdef TEST
