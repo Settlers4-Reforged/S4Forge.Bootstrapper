@@ -11,4 +11,13 @@
             <ExportFileDir>\Forge\CrashRpt</ExportFileDir>
         </ExportFile>
     </ItemGroup>
+
+    <!--Forge Manifest System: -->
+    <PropertyGroup>
+        <ManifestId>S4Forge.Bootstrapper</ManifestId>
+        <ManifestName>Bootstrapper</ManifestName>
+        <ManifestType>$(ProjectType)</ManifestType>
+        <ManifestClearResidualFiles>false</ManifestClearResidualFiles>
+        <ManifestEmbedded>true</ManifestEmbedded>
+    </PropertyGroup>
 </Project>
