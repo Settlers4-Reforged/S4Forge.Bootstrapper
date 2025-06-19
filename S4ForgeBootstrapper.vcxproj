@@ -174,8 +174,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageOutputPath>$(SolutionDir)BUILD\NuGet\</PackageOutputPath>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-
-    <RepositoryUrl>https://github.com/Settlers-4-Reforged/S4Forge.Bootstrapper</RepositoryUrl>
+    <RepositoryUrl>https://github.com/Settlers4-Reforged/S4Forge.Bootstrapper</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
