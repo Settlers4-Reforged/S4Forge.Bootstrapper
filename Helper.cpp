@@ -119,7 +119,10 @@ String^ GetStackTrace(PEXCEPTION_POINTERS exception_pointers = nullptr, int skip
                 // It can happen, that we actually not know where the symbol come from. It is at least not managed...
                 if (managedSymbol != nullptr) {
                     System::Reflection::MethodBase^ managedMethod = (System::Reflection::MethodBase^)managedSymbol;
-                    auto symbolName = managedMethod->DeclaringType->Name + "::" + managedMethod->Name;
+                    System::String^ declaringType = "<Module>";
+                    if(managedMethod->DeclaringType != nullptr)
+                        declaringType = managedMethod->DeclaringType->Name;
+                    auto symbolName = declaringType + "::" + managedMethod->Name;
                     auto moduleName = managedMethod->Module->Name;
 
                     // First real managed method, no longer skip

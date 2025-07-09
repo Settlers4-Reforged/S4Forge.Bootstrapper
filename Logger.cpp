@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Logger.h"
+#include "CrashHandler.h"
 
 #undef GetCurrentDirectory
 #pragma warning(push)
@@ -96,7 +97,11 @@ void NetModAPI::Logger::LogWarn(String^ msg, [System::Runtime::InteropServices::
 }
 
 void NetModAPI::Logger::LogError(String^ msg, Exception^ exception, [System::Runtime::InteropServices::Optional]String^ logger) {
-    if (exception != nullptr && exception->Data["Stack"] != nullptr) {
+    if (exception != nullptr) {
+        if (exception->Data["Stack"] == nullptr) {
+            exception->Data["Stack"] = CrashHandling::DebugService::GetFullStacktrace(8, false);
+        }
+
         msg += "\n### Stack Trace ###\n" + exception->Data["Stack"];
     }
     GetErrorLogger(logger)->Error(msg);
