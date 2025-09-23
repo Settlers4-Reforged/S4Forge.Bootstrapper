@@ -8,6 +8,7 @@
 #include <iostream>
 #include <windows.h>
 #include <tlhelp32.h>
+#include "Logger.h"
 
 S4API ModAPI;
 
@@ -37,6 +38,8 @@ extern "C" __declspec(dllexport) void InitAsi() {
     AllocConsole();
     freopen("CONOUT$", "w", stdout);
     freopen("CONOUT$", "w", stderr);
+    InitializeLogging();
+
 #endif // !PUBLIC
 
     __try {

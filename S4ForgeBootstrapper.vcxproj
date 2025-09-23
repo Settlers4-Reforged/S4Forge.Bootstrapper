@@ -190,7 +190,6 @@
     <ClInclude Include="DirectX.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="Helper.h" />
-    <ClInclude Include="IForge.h" />
     <ClInclude Include="Lambda2Delegate.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="ManagedIncludes.h" />

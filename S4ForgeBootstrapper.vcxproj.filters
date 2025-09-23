@@ -72,9 +72,6 @@
     <ClInclude Include="NetS4ModApi.h">
       <Filter>Header Files\ModAPI</Filter>
     </ClInclude>
-    <ClInclude Include="IForge.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ManagedIncludes.h">
       <Filter>Header Files</Filter>
     </ClInclude>

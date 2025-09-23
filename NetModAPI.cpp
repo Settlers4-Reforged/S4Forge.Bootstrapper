@@ -4,12 +4,16 @@
 #include "NetModAPI.h"
 
 #include "Logger.h"
+#include <vcclr.h>
 
 using namespace System;
 using namespace IO;
 using namespace Reflection;
 using namespace Linq;
 using namespace Collections::Generic;
+
+#define LogInfo(msg) LogMessage(LogLevelInfo, L"S4ForgeBootstrapper", L"Bootstrap", msg)
+#define LogError(msg) LogMessage(LogLevelError, L"S4ForgeBootstrapper", L"Bootstrap", msg)
 
 bool IsIPlugin(Type^ type) {
     if(type->IsInterface)
@@ -30,11 +34,11 @@ bool NetModAPI::NetModAPI::LoadForge() {
 
     String^ file = "plugins\\Forge\\S4Forge.dll";
     if(!File::Exists(file)) {
-        Logger::LogError("S4Forge.dll not found in plugins folder!", nullptr, nullptr);
+        LogError(L"S4Forge.dll not found in plugins folder!");
         return false;
     }
 
-    Logger::LogInfo("Loading S4Forge Assembly...", nullptr);
+    LogInfo(L"Loading S4Forge Assembly...");
 
     try {
         Assembly^ pluginAssembly = Assembly::LoadFrom(file);
@@ -46,7 +50,7 @@ bool NetModAPI::NetModAPI::LoadForge() {
 
         IForge^ plugin = static_cast<IForge^>(Activator::CreateInstance(pluginClass));
 
-        Logger::LogInfo("Initializing S4Forge...", nullptr);
+        LogInfo(L"Initializing S4Forge...");
         plugin->Initialize();
     } catch(Exception^ e) {
         String^ stackTrace = e->StackTrace;
@@ -55,7 +59,8 @@ bool NetModAPI::NetModAPI::LoadForge() {
         }
 
         String^ errorMsg = String::Format("Error during load of Forge \nError: {0}\n\n============= Stack Trace =============\n{1}", e->Message, stackTrace);
-        Logger::LogError(errorMsg, e, nullptr);
+        pin_ptr<const wchar_t> wch = PtrToStringChars(errorMsg);
+        LogMessage((int)LogLevelError, L"S4ForgeBootstrapper", L"Bootstrap", wch);
 
         CrashHandling::DebugService::GetReporter()->ReportException(CrashHandling::DebugReportSource{ "S4Forge" }, "Error during load of Forge", e, true);
     }

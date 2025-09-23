@@ -185,13 +185,3 @@ String^ GetStackTrace(PEXCEPTION_POINTERS exception_pointers = nullptr, int skip
     return String::Join("\n", output);
 #endif
 }
-
-
-void LogCall(System::String^ name) {
-    NetModAPI::Logger::LogInfo("Called " + name + "!", nullptr);
-
-    System::String^ output = "Stack Trace for " + name + ":\n";
-
-    output += GetStackTrace();
-    NetModAPI::Logger::LogInfo(output, nullptr);
-}
