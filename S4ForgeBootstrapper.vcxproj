@@ -33,6 +33,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <CharacterSet>Unicode</CharacterSet>
     <OutDir>$(SolutionDir)BUILD\APIWrapper\$(Configuration)\</OutDir>
+    <WindowsTargetPlatformMinVersion>7.0</WindowsTargetPlatformMinVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -67,18 +68,21 @@
     <TargetExt>.asi</TargetExt>
     <CopyLocalProjectReference>true</CopyLocalProjectReference>
     <CopyCppRuntimeToOutputDir>true</CopyCppRuntimeToOutputDir>
+    <ManagedAssembly>true</ManagedAssembly>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetExt>.asi</TargetExt>
     <OutDir>$(SolutionDir)BUILD\APIWrapper\$(Configuration)\</OutDir>
     <CopyCppRuntimeToOutputDir>true</CopyCppRuntimeToOutputDir>
     <CopyLocalProjectReference>true</CopyLocalProjectReference>
+    <ManagedAssembly>true</ManagedAssembly>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">
     <TargetExt>.asi</TargetExt>
     <OutDir>$(SolutionDir)BUILD\APIWrapper\$(Configuration)\</OutDir>
     <CopyCppRuntimeToOutputDir>true</CopyCppRuntimeToOutputDir>
     <CopyLocalProjectReference>true</CopyLocalProjectReference>
+    <ManagedAssembly>true</ManagedAssembly>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -87,13 +91,14 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir)lib\s4modapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalOptions>/clr:ECMAParamArray %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
+      <EnableModules>false</EnableModules>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -106,13 +111,14 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>TEST;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir)lib\s4modapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalOptions>/clr:ECMAParamArray %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
+      <EnableModules>false</EnableModules>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -125,13 +131,14 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir)lib\s4modapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalOptions>/clr:ECMAParamArray %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
+      <EnableModules>false</EnableModules>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(ProjectDir)lib\s4modapi\S4ModApi.lib;d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -157,7 +164,7 @@
       <Pack>true</Pack>
       <PackagePath>lib/net80</PackagePath>
     </Content>
-    <None Include="README.md" Pack="true" PackagePath="\"/>
+    <None Include="README.md" Pack="true" PackagePath="\" />
     <Content Include="NuGet/S4Forge.Bootstrapper.targets">
       <Pack>true</Pack>
       <PackagePath>build/</PackagePath>
@@ -184,40 +191,6 @@
     -->
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
   </PropertyGroup>
-  <ItemGroup>
-    <ClInclude Include="CrashHandler.h" />
-    <ClInclude Include="Device.h" />
-    <ClInclude Include="DirectX.h" />
-    <ClInclude Include="globals.h" />
-    <ClInclude Include="Helper.h" />
-    <ClInclude Include="Lambda2Delegate.h" />
-    <ClInclude Include="Logger.h" />
-    <ClInclude Include="ManagedIncludes.h" />
-    <ClInclude Include="ManagedLoader.h" />
-    <ClInclude Include="NetModAPI.h" />
-    <ClInclude Include="NetS4ModApi.h" />
-    <ClInclude Include="Patching.h" />
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="S4APIHooks.h" />
-    <ClInclude Include="S4Hooks.h" />
-    <ClInclude Include="Surface.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="AssemblyInfo.cpp" />
-    <ClCompile Include="CrashHandler.cpp" />
-    <ClCompile Include="DllMain.cpp" />
-    <ClCompile Include="Helper.cpp" />
-    <ClCompile Include="Logger.cpp" />
-    <ClCompile Include="ManagedLoader.cpp" />
-    <ClCompile Include="NetModAPI.cpp" />
-    <ClCompile Include="NetS4ModApi.cpp" />
-    <ClCompile Include="Patching.cpp" />
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader>Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="S4Hooks.cpp" />
-  </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc" />
   </ItemGroup>
@@ -247,5 +220,48 @@
   </ImportGroup>
   <ItemGroup>
     <None Include="ForgeBuild.props" />
+  </ItemGroup>
+  <Choose>
+    <When Condition="'$(SolutionName)'=='S4ModdingFramework'">
+      <ItemGroup>
+        <ProjectReference Include="..\Forge\S4Forge.csproj">
+          <Project>{f06e741d-b611-4af3-9bb7-05174a0718d7}</Project>
+        </ProjectReference>
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <PackageReference Include="S4Forge" Version="0.9.*" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ConfigManager.h" />
+    <ClInclude Include="CrashHandler.h" />
+    <ClInclude Include="globals.h" />
+    <ClInclude Include="Helper.h" />
+    <ClInclude Include="Lambda2Delegate.h" />
+    <ClInclude Include="Logger.h" />
+    <ClInclude Include="ManagedLoader.h" />
+    <ClInclude Include="ForgeLoader.h" />
+    <ClInclude Include="NetS4ModApi.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="S4APIHooks.h" />
+    <ClInclude Include="S4Hooks.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="CrashHandler.cpp" />
+    <ClCompile Include="DllMain.cpp" />
+    <ClCompile Include="Helper.cpp" />
+    <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="ManagedLoader.cpp" />
+    <ClCompile Include="ForgeLoader.cpp" />
+    <ClCompile Include="NetS4ModApi.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="S4Hooks.cpp" />
   </ItemGroup>
 </Project>

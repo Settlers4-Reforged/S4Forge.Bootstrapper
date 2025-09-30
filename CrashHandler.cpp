@@ -12,6 +12,7 @@
 using namespace System::Runtime::InteropServices;
 using namespace System;
 using namespace Sentry;
+using namespace Forge::Logging;
 
 LPTOP_LEVEL_EXCEPTION_FILTER g_clr_crash_handler;
 
@@ -194,6 +195,10 @@ void CrashHandling::CrashRptDebugReporter::SetGpuInfo(System::String^ vendor, Sy
     SentrySetGpuInfo(vendor, gpuName, renderer);
 }
 
+System::String^ CrashHandling::CrashRptDebugReporter::GetFullStacktrace(int skip, bool skipToFirstManaged) {
+    return GetStackTrace(nullptr, skip, skipToFirstManaged);
+}
+
 void HandleNativeException(PEXCEPTION_POINTERS exception_pointers, bool isManaged) {
     MINIDUMP_EXCEPTION_INFORMATION minidump_exception_information = MINIDUMP_EXCEPTION_INFORMATION();
     minidump_exception_information.ThreadId = GetCurrentThreadId();
@@ -237,57 +242,59 @@ LONG __stdcall CrashHandling::ForgeExceptionHandler(PEXCEPTION_POINTERS exceptio
 
     g_last_exception_pointers = exception_pointers;
 
-    // Check whether the exception is a managed exception:
-    auto coreCLR = GetModuleHandle(L"coreclr.dll");
-    bool isManagedException = false;
-    if (coreCLR != nullptr) {
-        const DWORD coreclr_base = reinterpret_cast<DWORD>(coreCLR);
-        const int coreclr_exception_record_at = 4;
-        const auto exception_record = exception_pointers->ExceptionRecord;
-        const auto exception_code = exception_record->ExceptionCode;
-
-        // Module not found exception, those can be handled by the clr, but some are first caught by this function here, so we continue the search.
-        if (exception_code == 0xC06D007E) {
-            return EXCEPTION_CONTINUE_SEARCH;
-        }
-
-        // See https://github.com/dotnet/runtime/blob/main/src/coreclr/utilcode/ex.cpp#L1313
-        if (exception_code == 0xE0434352 && exception_record->ExceptionInformation[coreclr_exception_record_at] == coreclr_base) {
-            isManagedException = true;
-        }
-    }
-
-    HandleNativeException(exception_pointers, isManagedException);
-
-
-#if DEBUG
     {
-        const wchar_t* message = L"Exception not caught.\n\nAttach debugger and press retry to debug, or press cancel to stop execution. Press ignore to invoke the default error handler";
-        if (isManagedException) {
-            message = L"Managed Exception not caught.\n\nAttach debugger and press retry to debug, or press cancel to stop execution. Press ignore to invoke the default error handler";
+        // Check whether the exception is a managed exception:
+        auto coreCLR = GetModuleHandle(L"coreclr.dll");
+        bool isManagedException = false;
+        if (coreCLR != nullptr) {
+            const DWORD coreclr_base = reinterpret_cast<DWORD>(coreCLR);
+            const int coreclr_exception_record_at = 4;
+            const auto exception_record = exception_pointers->ExceptionRecord;
+            const auto exception_code = exception_record->ExceptionCode;
+
+            // Module not found exception, those can be handled by the clr, but some are first caught by this function here, so we continue the search.
+            if (exception_code == 0xC06D007E) {
+                return EXCEPTION_CONTINUE_SEARCH;
+            }
+
+            // See https://github.com/dotnet/runtime/blob/main/src/coreclr/utilcode/ex.cpp#L1313
+            if (exception_code == 0xE0434352 && exception_record->ExceptionInformation[coreclr_exception_record_at] == coreclr_base) {
+                isManagedException = true;
+            }
         }
 
-        const int choice = MessageBox(nullptr, message, L"Forge -  Error", MB_ABORTRETRYIGNORE);
-        if (choice == IDRETRY) {
-            return EXCEPTION_CONTINUE_SEARCH;
-        } else if (choice == IDABORT) {
-            ExitProcess(0);
-        }
-    }
-#endif
+        HandleNativeException(exception_pointers, isManagedException);
 
-    if (isManagedException) {
-        if (!g_clr_crash_handler) {
+
 #if DEBUG
-            // This should never happen, but if it does, we should report it.
-            MessageBoxW(nullptr, L"CLR Exception Handler not set, but received a managed exception", L"Forge - Error", 0);
-#endif
-            // If the CLR crash handler is not set, we should not handle the exception with the clr.
-            goto skip_clr_crash_handler;
-        }
+        {
+            const wchar_t* message = L"Exception not caught.\n\nAttach debugger and press retry to debug, or press cancel to stop execution. Press ignore to invoke the default error handler";
+            if (isManagedException) {
+                message = L"Managed Exception not caught.\n\nAttach debugger and press retry to debug, or press cancel to stop execution. Press ignore to invoke the default error handler";
+            }
 
-        if (g_clr_crash_handler(exception_pointers) == EXCEPTION_CONTINUE_EXECUTION || g_exception_handled_by_clr)
-            return EXCEPTION_CONTINUE_EXECUTION;
+            const int choice = MessageBox(nullptr, message, L"Forge -  Error", MB_ABORTRETRYIGNORE);
+            if (choice == IDRETRY) {
+                return EXCEPTION_CONTINUE_SEARCH;
+            } else if (choice == IDABORT) {
+                ExitProcess(0);
+            }
+        }
+#endif
+
+        if (isManagedException) {
+            if (!g_clr_crash_handler) {
+#if DEBUG
+                // This should never happen, but if it does, we should report it.
+                MessageBoxW(nullptr, L"CLR Exception Handler not set, but received a managed exception", L"Forge - Error", 0);
+#endif
+                // If the CLR crash handler is not set, we should not handle the exception with the clr.
+                goto skip_clr_crash_handler;
+            }
+
+            if (g_clr_crash_handler(exception_pointers) == EXCEPTION_CONTINUE_EXECUTION || g_exception_handled_by_clr)
+                return EXCEPTION_CONTINUE_EXECUTION;
+        }
     }
 
 

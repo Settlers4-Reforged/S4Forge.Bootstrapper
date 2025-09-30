@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ManagedIncludes.h"
 #include "ManagedLoader.h"
+#include "ForgeLoader.h"
 
 
 using namespace System;
@@ -20,8 +21,10 @@ Assembly^ AssemblyLoader(Object^ sender, ResolveEventArgs^ args) {
 
         String^ resourceName = (gcnew AssemblyName(args->Name))->Name + ".dll";
 
+
+        // Check for assemblies in the bootstrapper assembly:
         String^ resource = nullptr;
-        auto    embeddedAssemblies = (NetModAPI::IForge::typeid)->Assembly->GetManifestResourceNames();
+        auto    embeddedAssemblies = Assembly::GetExecutingAssembly()->GetManifestResourceNames();
         for each (String ^ a in embeddedAssemblies) {
             if (a->EndsWith(resourceName)) {
                 resource = a;
@@ -68,6 +71,6 @@ DWORD __stdcall InitPlugins(void* param) {
     currentDomain->AssemblyResolve += gcnew ResolveEventHandler(&AssemblyLoader);
 
     CrashHandling::InstallCrashHandler();
-    NetModAPI::NetModAPI::LoadForge();
+    LoadForge();
     return 0;
 }

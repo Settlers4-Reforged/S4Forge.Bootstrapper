@@ -1,145 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;h</Extensions>
     </Filter>
-    <Filter Include="Source Files\Init">
-      <UniqueIdentifier>{84e0f541-0904-4f6d-9ab4-28bce302529f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ModAPI">
-      <UniqueIdentifier>{a590fe27-fc62-4d33-ac99-6e3a3fe1d6d6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\ModAPI">
-      <UniqueIdentifier>{8c38de0d-4d38-427d-9a65-9c87c7701642}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\ModAPI\Logger">
-      <UniqueIdentifier>{c14f1c06-2792-40fa-aafa-1d9b12ef227c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ModAPI\Logger">
-      <UniqueIdentifier>{86bdb139-43a5-4b31-bb1d-d36d781a715b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Config">
-      <UniqueIdentifier>{4428d5d9-f649-408c-85ed-13dd142787ed}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files\Resources">
       <UniqueIdentifier>{c9d4091d-d8fd-46ae-9090-35643d1b9272}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\DirectX">
-      <UniqueIdentifier>{78f968c6-3ac2-40a6-bb3a-0be3ca69694f}</UniqueIdentifier>
+    <Filter Include="Source">
+      <UniqueIdentifier>{a8b33478-a849-432f-8197-fae385ae2ed7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\DirectX\DirectDraw">
-      <UniqueIdentifier>{a0a36607-9b2f-4d0a-a3b6-1a081fe08285}</UniqueIdentifier>
+    <Filter Include="Source\GameInterop">
+      <UniqueIdentifier>{9743bd6e-cec5-44c6-82f2-6b69656899a3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\CrashHandling">
-      <UniqueIdentifier>{d71d6654-fa1f-4f07-964e-820b8a27137d}</UniqueIdentifier>
+    <Filter Include="Source\Forge">
+      <UniqueIdentifier>{5ca2175b-91f2-4c11-a22f-428b6dd1348b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\CrashHandling">
-      <UniqueIdentifier>{7baa4137-2d00-4fab-bc65-c7f1387912cc}</UniqueIdentifier>
+    <Filter Include="Source\CLR">
+      <UniqueIdentifier>{daf70bcd-9083-4a7a-b533-65bb789ffa5f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\S4Hooks">
-      <UniqueIdentifier>{ed300020-438d-4348-92af-3da08bcb6b49}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\S4Hooks">
-      <UniqueIdentifier>{068cc480-db2b-4b3c-b529-7b54ba4f818a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Definitions">
-      <UniqueIdentifier>{022ab4ce-6ff3-4a3c-aa86-2f09fdd339ef}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="NetModAPI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="globals.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NetS4ModApi.h">
-      <Filter>Header Files\ModAPI</Filter>
-    </ClInclude>
-    <ClInclude Include="ManagedIncludes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ManagedLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Logger.h">
-      <Filter>Header Files\ModAPI\Logger</Filter>
-    </ClInclude>
-    <ClInclude Include="Patching.h">
-      <Filter>Header Files\ModAPI</Filter>
-    </ClInclude>
-    <ClInclude Include="Device.h">
-      <Filter>Header Files\DirectX\DirectDraw</Filter>
-    </ClInclude>
-    <ClInclude Include="Surface.h">
-      <Filter>Header Files\DirectX\DirectDraw</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX.h">
-      <Filter>Header Files\DirectX</Filter>
-    </ClInclude>
-    <ClInclude Include="CrashHandler.h">
-      <Filter>Header Files\CrashHandling</Filter>
-    </ClInclude>
-    <ClInclude Include="S4Hooks.h">
-      <Filter>Header Files\S4Hooks</Filter>
-    </ClInclude>
-    <ClInclude Include="S4APIHooks.h">
-      <Filter>Header Files\ModAPI</Filter>
-    </ClInclude>
-    <ClInclude Include="Lambda2Delegate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Helper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DllMain.cpp">
-      <Filter>Source Files\Init</Filter>
-    </ClCompile>
-    <ClCompile Include="NetModAPI.cpp">
-      <Filter>Source Files\ModAPI</Filter>
-    </ClCompile>
-    <ClCompile Include="NetS4ModApi.cpp">
-      <Filter>Source Files\ModAPI</Filter>
-    </ClCompile>
-    <ClCompile Include="Logger.cpp">
-      <Filter>Source Files\ModAPI\Logger</Filter>
-    </ClCompile>
-    <ClCompile Include="AssemblyInfo.cpp">
-      <Filter>Source Files\Config</Filter>
-    </ClCompile>
-    <ClCompile Include="ManagedLoader.cpp">
-      <Filter>Source Files\Init</Filter>
-    </ClCompile>
-    <ClCompile Include="Patching.cpp">
-      <Filter>Source Files\ModAPI</Filter>
-    </ClCompile>
-    <ClCompile Include="CrashHandler.cpp">
-      <Filter>Source Files\CrashHandling</Filter>
-    </ClCompile>
-    <ClCompile Include="S4Hooks.cpp">
-      <Filter>Source Files\S4Hooks</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">
@@ -156,5 +36,83 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ForgeBuild.props" />
+    <None Include="README.md" />
+    <None Include="$(ManifestOutputPath)" />
+    <None Include="$(ManifestOutputPath)" />
+    <None Include="$(ManifestOutputPath)" />
+    <None Include="$(ManifestOutputPath)" />
+    <None Include="$(ManifestOutputPath)" />
+    <None Include="$(ManifestOutputPath)" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="S4Hooks.h">
+      <Filter>Source\GameInterop</Filter>
+    </ClInclude>
+    <ClInclude Include="CrashHandler.h">
+      <Filter>Source\Forge</Filter>
+    </ClInclude>
+    <ClInclude Include="Helper.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Source\Forge</Filter>
+    </ClInclude>
+    <ClInclude Include="ManagedLoader.h">
+      <Filter>Source\Forge</Filter>
+    </ClInclude>
+    <ClInclude Include="S4APIHooks.h">
+      <Filter>Source\GameInterop</Filter>
+    </ClInclude>
+    <ClInclude Include="globals.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="ForgeLoader.h">
+      <Filter>Source\Forge</Filter>
+    </ClInclude>
+    <ClInclude Include="NetS4ModApi.h">
+      <Filter>Source\GameInterop</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigManager.h">
+      <Filter>Source\GameInterop</Filter>
+    </ClInclude>
+    <ClInclude Include="Lambda2Delegate.h">
+      <Filter>Source\CLR</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="S4Hooks.cpp">
+      <Filter>Source\GameInterop</Filter>
+    </ClCompile>
+    <ClCompile Include="CrashHandler.cpp">
+      <Filter>Source\Forge</Filter>
+    </ClCompile>
+    <ClCompile Include="AssemblyInfo.cpp">
+      <Filter>Source\CLR</Filter>
+    </ClCompile>
+    <ClCompile Include="Helper.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Source\Forge</Filter>
+    </ClCompile>
+    <ClCompile Include="ManagedLoader.cpp">
+      <Filter>Source\Forge</Filter>
+    </ClCompile>
+    <ClCompile Include="DllMain.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ForgeLoader.cpp">
+      <Filter>Source\Forge</Filter>
+    </ClCompile>
+    <ClCompile Include="NetS4ModApi.cpp" />
   </ItemGroup>
 </Project>
