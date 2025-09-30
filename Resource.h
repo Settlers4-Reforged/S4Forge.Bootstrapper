@@ -2,7 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by app.rc
 
-#define FILE_VERSION 1, 0, 0
+#define FILE_VERSION 0, 8, 7
 #ifdef _DEBUG
 #define FILE_VERSION_STRING "DEBUG"
 #else
